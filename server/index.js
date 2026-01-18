@@ -128,6 +128,11 @@ app.use(cors());
 app.use(express.json({ limit: '10mb' }));
 app.use(generalLimiter); // Apply general rate limit to all routes
 
+// Serve static files from the built frontend (production)
+const __dirname = path.dirname(new URL(import.meta.url).pathname);
+const distPath = path.join(__dirname, '..', 'dist');
+app.use(express.static(distPath));
+
 // Configuration
 const GOOGLE_MAPS_API_KEY = process.env.GOOGLE_MAPS_API_KEY;
 const GOOGLE_AI_API_KEY = process.env.GOOGLE_AI_API_KEY;
@@ -1047,10 +1052,21 @@ app.post('/api/capture-email', (req, res) => {
   });
 });
 
+// SPA fallback - serve index.html for all non-API routes (must be after API routes)
+app.get('*', (req, res) => {
+  const indexPath = path.join(distPath, 'index.html');
+  if (fs.existsSync(indexPath)) {
+    res.sendFile(indexPath);
+  } else {
+    res.status(404).send('Frontend not built. Run: npm run build');
+  }
+});
+
 // Start server
 app.listen(PORT, () => {
   console.log(`\n🏠 Diorama Generator API Server`);
   console.log(`   Running on http://localhost:${PORT}`);
   console.log(`   Street View: ${GOOGLE_MAPS_API_KEY ? '✅ Configured' : '❌ Not configured'}`);
-  console.log(`   Google AI: ${GOOGLE_AI_API_KEY ? '✅ Configured' : '❌ Not configured'}\n`);
+  console.log(`   Google AI: ${GOOGLE_AI_API_KEY ? '✅ Configured' : '❌ Not configured'}`);
+  console.log(`   Frontend: ${fs.existsSync(distPath) ? '✅ Built' : '⚠️  Not built (run npm run build)'}\n`);
 });
