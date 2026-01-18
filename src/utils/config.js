@@ -109,7 +109,25 @@ export const STYLES = {
     bgColor: 'rgba(125, 196, 165, 0.1)',
     icon: '🍃',
     useReference: true,
-    promptV2: 'Animal Crossing New Horizons style rendering. Soft rounded edges, warm cel-shaded lighting, slightly chibi proportions, lush green grass, cute simplified details, pastel sky with fluffy clouds. Nintendo Switch game aesthetic.',
+    promptV2: `Animal Crossing style illustration - a soft, hand-drawn storybook scene. NOT a 3D game screenshot.
+
+Art style requirements:
+- Soft, gentle LINE ART with pastel colored outlines (not black)
+- Hand-illustrated, watercolor-like quality
+- Dreamy, whimsical storybook aesthetic
+- Soft pastel color palette with muted tones
+- Gentle gradients and soft shading
+
+Scene composition:
+- The house as the focal point in middle-ground
+- 2-3 CUTE ANTHROPOMORPHIC ANIMAL VILLAGERS in the foreground (foxes, deer, cats, etc. wearing clothes)
+- Lush, illustrated trees with soft, fluffy foliage surrounding the scene
+- A gentle stream, pond, or river in the foreground
+- Stepping stone path leading to the house
+- Soft clouds and warm sunny sky
+- Butterflies, birds, or falling leaves for atmosphere
+
+The overall feeling should be cozy, peaceful, and magical - like a scene from a beloved children's book or Animal Crossing promotional art.`,
   },
   ghibli: {
     id: 'ghibli',
@@ -131,7 +149,30 @@ export const STYLES = {
     bgColor: 'rgba(45, 90, 39, 0.1)',
     icon: '🌲',
     useReference: true,
-    promptV2: 'Bob Ross "Joy of Painting" style oil painting. Wet-on-wet technique, happy little trees, soft misty mountains in background, peaceful mood, titanium white highlights, van dyke brown shadows, almighty brush strokes. Calm, serene, ASMR-like tranquility.',
+    promptV2: `Bob Ross style oil painting - a naturalistic landscape scene with the house nestled organically in nature.
+
+Painting style:
+- Impressionistic oil painting with VISIBLE BRUSH STROKES
+- Wet-on-wet technique with soft, blended edges
+- Canvas texture visible through the paint
+- Rich, warm color palette
+
+Scene composition (IMPORTANT - naturalistic, not staged):
+- The house viewed from an angle, partially obscured by trees
+- ABUNDANT AUTUMN FOLIAGE - rich oranges, deep reds, golden yellows, rusty browns
+- Deciduous trees with detailed fall leaves surrounding and framing the house
+- A winding stream or creek flowing through the foreground
+- Wildflowers, bushes, and natural ground cover
+- Soft afternoon sunlight filtering through the trees
+- The house should feel like it BELONGS in this natural setting
+
+Avoid:
+- Symmetrical compositions
+- The house being too prominent or centered
+- Sparse, empty areas
+- Overly bright or saturated colors
+
+The painting should feel like a peaceful autumn day - the kind of scene Bob would paint while talking about "happy little trees" and making you feel relaxed.`,
   },
   kinkade: {
     id: 'kinkade',
@@ -153,7 +194,26 @@ export const STYLES = {
     bgColor: 'rgba(30, 58, 95, 0.1)',
     icon: '🌊',
     useReference: false, // Needs creative freedom for stylization
-    promptV2: 'Traditional Japanese ukiyo-e woodblock print. Flat color areas with bold black outlines, Hokusai/Hiroshige style, traditional indigo and earth tones, stylized clouds, subtle wood grain texture, Edo period aesthetic.',
+    promptV2: `Traditional Japanese ukiyo-e woodblock print in the style of Hokusai and Hiroshige. Create a COMPLETE COMPOSITION, not just the house.
+
+REQUIRED elements:
+- The house as the central subject but integrated into a larger scene
+- Mount Fuji or mountains visible in the distant background
+- Traditional Japanese figures in period clothing (merchants, travelers, or townspeople) in the foreground or middle ground
+- Japanese calligraphy/kanji text block on the left or right margin (artist signature style)
+- Decorative cartouche with title text
+- Stylized waves, clouds, or wind patterns
+- Cherry blossoms or pine trees framing the scene
+
+Visual style requirements:
+- Flat color areas with BOLD BLACK OUTLINES (no gradients)
+- Limited color palette: indigo blue, rust red, ochre yellow, sage green, cream
+- Visible wood grain texture throughout
+- Bokashi gradient technique on sky
+- Multiple visual planes creating depth
+- Edo period (1603-1868) aesthetic
+
+This should look like it could hang in a museum next to "The Great Wave."`,
   },
   travelposter: {
     id: 'travelposter',
