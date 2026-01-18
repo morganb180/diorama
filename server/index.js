@@ -12,6 +12,9 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 3001;
 
+// Trust proxy for deployments behind reverse proxies (Digital Ocean, Heroku, etc.)
+app.set('trust proxy', 1);
+
 // ============================================
 // RATE LIMITING
 // ============================================
