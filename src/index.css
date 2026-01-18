@@ -1,0 +1,93 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    @apply font-body text-slate-800 bg-studio-cream;
+  }
+
+  ::selection {
+    @apply bg-opendoor-blue/20 text-opendoor-blue-dark;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply relative overflow-hidden px-8 py-4 bg-opendoor-blue text-white font-display font-semibold rounded-xl
+           transition-all duration-300 ease-out
+           hover:bg-opendoor-blue-dark hover:shadow-glow hover:-translate-y-0.5
+           active:translate-y-0 active:shadow-card
+           disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:shadow-none;
+  }
+
+  .btn-primary::before {
+    content: '';
+    @apply absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0
+           -translate-x-full transition-transform duration-700;
+  }
+
+  .btn-primary:hover::before {
+    @apply translate-x-full;
+  }
+
+  .input-field {
+    @apply w-full px-5 py-4 bg-white border-2 border-studio-warm rounded-xl
+           font-body text-slate-700 placeholder:text-slate-400
+           transition-all duration-200 ease-out
+           focus:outline-none focus:border-opendoor-blue focus:shadow-glow/50 focus:ring-4 focus:ring-opendoor-blue/10;
+  }
+
+  .style-chip {
+    @apply relative flex items-center gap-3 px-5 py-3 rounded-xl border-2 cursor-pointer
+           transition-all duration-300 ease-out
+           hover:-translate-y-0.5 hover:shadow-card;
+  }
+
+  .style-chip.selected {
+    @apply border-opendoor-blue bg-opendoor-blue-light shadow-card -translate-y-0.5;
+  }
+
+  .style-chip:not(.selected) {
+    @apply border-studio-warm bg-white hover:border-slate-300;
+  }
+
+  .result-pedestal {
+    @apply relative p-2 bg-gradient-to-b from-white to-studio-paper rounded-2xl shadow-pedestal;
+  }
+
+  .result-pedestal::before {
+    content: '';
+    @apply absolute -inset-1 bg-gradient-to-b from-opendoor-blue/5 to-transparent rounded-3xl -z-10;
+  }
+
+  .loading-shimmer {
+    @apply bg-gradient-to-r from-slate-200 via-slate-100 to-slate-200 bg-[length:200%_100%] animate-shimmer;
+  }
+}
+
+@layer utilities {
+  .text-gradient {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-opendoor-blue to-opendoor-blue-dark;
+  }
+
+  .pattern-isometric {
+    background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 0L60 15L60 45L30 60L0 45L0 15Z' fill='none' stroke='%230074E4' stroke-opacity='0.04' stroke-width='0.5'/%3E%3C/svg%3E");
+  }
+
+  .pattern-dots {
+    background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='10' cy='10' r='1' fill='%230074E4' fill-opacity='0.08'/%3E%3C/svg%3E");
+  }
+
+  .noise-overlay {
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+    opacity: 0.015;
+    pointer-events: none;
+  }
+}

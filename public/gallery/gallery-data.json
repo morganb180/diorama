@@ -1,0 +1,74 @@
+[
+  {
+    "id": "white-house",
+    "name": "The White House",
+    "address": "1600 Pennsylvania Ave NW, Washington, DC 20500",
+    "original": "/gallery/white-house-original.jpg",
+    "styles": [
+      {
+        "id": "diorama",
+        "name": "Diorama",
+        "image": "/gallery/white-house-diorama.png"
+      },
+      {
+        "id": "ghibli",
+        "name": "Ghibli",
+        "image": "/gallery/white-house-ghibli.png"
+      }
+    ]
+  },
+  {
+    "id": "gamble-house",
+    "name": "The Gamble House",
+    "address": "4 Westmoreland Place, Pasadena, CA 91103",
+    "original": "/gallery/gamble-house-original.jpg",
+    "styles": [
+      {
+        "id": "diorama",
+        "name": "Diorama",
+        "image": "/gallery/gamble-house-diorama.png"
+      },
+      {
+        "id": "ghibli",
+        "name": "Ghibli",
+        "image": "/gallery/gamble-house-ghibli.png"
+      }
+    ]
+  },
+  {
+    "id": "fallingwater",
+    "name": "Fallingwater",
+    "address": "1491 Mill Run Rd, Mill Run, PA 15464",
+    "original": "/gallery/fallingwater-original.jpg",
+    "styles": [
+      {
+        "id": "diorama",
+        "name": "Diorama",
+        "image": "/gallery/fallingwater-diorama.png"
+      },
+      {
+        "id": "ghibli",
+        "name": "Ghibli",
+        "image": "/gallery/fallingwater-ghibli.png"
+      }
+    ]
+  },
+  {
+    "id": "graceland",
+    "name": "Graceland",
+    "address": "3764 Elvis Presley Blvd, Memphis, TN 38116",
+    "original": "/gallery/graceland-original.jpg",
+    "styles": [
+      {
+        "id": "diorama",
+        "name": "Diorama",
+        "image": "/gallery/graceland-diorama.png"
+      },
+      {
+        "id": "ghibli",
+        "name": "Ghibli",
+        "image": "/gallery/graceland-ghibli.png"
+      }
+    ]
+  }
+]
