@@ -29,26 +29,34 @@ const STYLES = [
 function DotMatrixBg() {
   return (
     <div className="fixed inset-0 pointer-events-none overflow-hidden">
-      {/* Base dot grid */}
-      <div
-        className="absolute inset-0 opacity-30"
-        style={{
-          backgroundImage: 'radial-gradient(circle at center, rgba(255,255,255,0.08) 1px, transparent 1px)',
-          backgroundSize: '12px 12px',
-        }}
-      />
-      {/* Accent glow in corner */}
-      <div
-        className="absolute -top-1/4 -right-1/4 w-1/2 h-1/2 opacity-20"
-        style={{
-          background: 'radial-gradient(circle, rgba(0, 116, 228, 0.4) 0%, transparent 60%)',
-        }}
-      />
-      {/* Subtle vignette */}
+      {/* Base dot grid - more visible */}
       <div
         className="absolute inset-0"
         style={{
-          background: 'radial-gradient(circle at center, transparent 0%, rgba(0,0,0,0.4) 100%)',
+          backgroundImage: 'radial-gradient(circle at center, rgba(255,255,255,0.15) 1.5px, transparent 1.5px)',
+          backgroundSize: '16px 16px',
+        }}
+      />
+      {/* Secondary smaller dots for texture */}
+      <div
+        className="absolute inset-0"
+        style={{
+          backgroundImage: 'radial-gradient(circle at center, rgba(255,255,255,0.08) 1px, transparent 1px)',
+          backgroundSize: '8px 8px',
+        }}
+      />
+      {/* Accent glow in top-right */}
+      <div
+        className="absolute -top-1/4 -right-1/4 w-3/4 h-3/4"
+        style={{
+          background: 'radial-gradient(circle, rgba(0, 116, 228, 0.25) 0%, transparent 50%)',
+        }}
+      />
+      {/* Coral glow in bottom-left */}
+      <div
+        className="absolute -bottom-1/4 -left-1/4 w-3/4 h-3/4"
+        style={{
+          background: 'radial-gradient(circle, rgba(255, 107, 74, 0.15) 0%, transparent 50%)',
         }}
       />
     </div>
