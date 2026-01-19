@@ -41,15 +41,15 @@ export function EmailCapture({ address }) {
       <motion.div
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
-        className="flex items-center gap-3 p-3 rounded-xl bg-green-50 border border-green-200"
+        className="flex items-center gap-3 p-3 rounded-xl bg-green-500/10 border border-green-500/30"
       >
         <div className="w-5 h-5 rounded-full bg-green-500 flex items-center justify-center flex-shrink-0">
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round">
             <polyline points="20,6 9,17 4,12" />
           </svg>
         </div>
-        <span className="text-sm text-green-800">
-          We'll be in touch at <span className="font-medium">{email}</span>
+        <span className="text-sm text-green-400">
+          We'll be in touch at <span className="font-medium text-green-300">{email}</span>
         </span>
       </motion.div>
     );
@@ -58,14 +58,14 @@ export function EmailCapture({ address }) {
   return (
     <div className="space-y-2">
       {/* Checkbox trigger */}
-      <label className="flex items-center gap-3 p-3 rounded-xl border border-gray-200 cursor-pointer hover:bg-gray-50 transition-colors">
+      <label className="flex items-center gap-3 p-3 rounded-xl border border-void-400 cursor-pointer hover:bg-void-200 transition-colors">
         <input
           type="checkbox"
           checked={isInterested}
           onChange={(e) => setIsInterested(e.target.checked)}
-          className="w-5 h-5 rounded border-gray-300 text-blue-500 focus:ring-blue-500"
+          className="w-5 h-5 rounded border-void-400 bg-void-200 text-accent focus:ring-accent focus:ring-offset-0 focus:ring-offset-void"
         />
-        <span className="text-sm text-gray-700">
+        <span className="text-sm text-white/70">
           Track my home value with Opendoor
         </span>
       </label>
@@ -88,17 +88,17 @@ export function EmailCapture({ address }) {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Enter your email"
-                className="flex-1 px-4 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="flex-1 px-4 py-3 bg-void-200 border border-void-400 rounded-xl text-sm text-white placeholder:text-white/40 focus:outline-none focus:border-accent focus:shadow-glow-sm"
                 disabled={isSubmitting}
               />
               <motion.button
                 type="submit"
                 disabled={!email.includes('@') || isSubmitting}
                 whileTap={{ scale: 0.97 }}
-                className={`px-4 py-3 rounded-xl text-sm font-medium transition-colors ${
+                className={`px-4 py-3 rounded-xl text-sm font-medium transition-all ${
                   email.includes('@') && !isSubmitting
-                    ? 'bg-blue-500 text-white hover:bg-blue-600'
-                    : 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                    ? 'bg-accent text-white hover:bg-accent-bright hover:shadow-glow'
+                    : 'bg-void-300 text-white/30 cursor-not-allowed'
                 }`}
               >
                 {isSubmitting ? (
