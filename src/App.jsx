@@ -132,9 +132,9 @@ function App() {
             href="https://www.opendoor.com/w/request-offer"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-sm text-white font-medium hover:text-accent transition-colors"
+            className="text-xs text-white/40 font-mono uppercase tracking-wider hover:text-white transition-colors"
           >
-            Get your offer →
+            GET YOUR OFFER →
           </a>
         </div>
       </header>
