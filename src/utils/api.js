@@ -173,10 +173,10 @@ export async function generateDiorama(address, styleId, onProgress = () => {}) {
 
 /**
  * Generate diorama using the V2 backend API endpoint (Identity + Reference approach)
+ * NOTE: Style prompts are now managed server-side for security.
+ *       Only styleId is sent; the server looks up the prompt from its allowlist.
  */
 async function generateDioramaViaApi(address, styleId, onProgress) {
-  const style = STYLES[styleId];
-
   try {
     // Step 1: Start
     onProgress({ step: 1, total: 3, message: 'Capturing street view...' });
@@ -185,15 +185,14 @@ async function generateDioramaViaApi(address, styleId, onProgress) {
     // Step 2: Processing
     onProgress({ step: 2, total: 3, message: 'Extracting house identity...' });
 
-    // Use V2 endpoint with identity + reference approach
+    // Use V2 endpoint - only send styleId, server handles prompt lookup
     const response = await fetch(`${API_BASE}/generate-v2`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         address,
         styleId,
-        stylePrompt: style.promptV2 || style.prompt?.('[SEMANTIC_DESCRIPTION]') || '',
-        useReference: style.useReference !== false, // Default to true if not specified
+        // NOTE: stylePrompt and useReference are now server-controlled
       }),
     });
 

@@ -148,6 +148,171 @@ if (!GOOGLE_AI_API_KEY) {
 // Initialize Gemini client
 const genAI = GOOGLE_AI_API_KEY ? new GoogleGenerativeAI(GOOGLE_AI_API_KEY) : null;
 
+// ============================================
+// STYLE ALLOWLIST (Server-side definitions)
+// These cannot be overridden by client requests
+// ============================================
+
+const ALLOWED_STYLES = {
+  diorama: {
+    name: 'Miniature Diorama',
+    useReference: true,
+    prompt: '45-degree isometric miniature architectural diorama model. Studio photography, warm lighting, clean background. Show the house from an isometric angle revealing front, side, and roof. Include the pool in the back. Make it look like a high-end architectural scale model.',
+  },
+  simcity: {
+    name: 'Retro SimCity',
+    useReference: true,
+    prompt: '90s SimCity-style 2.5D isometric pixel art sprite. Clean aliased edges, vibrant 16-bit colors, gray-blue solid background. Pixel-perfect retro game aesthetic.',
+  },
+  lego: {
+    name: 'LEGO Architecture',
+    useReference: true,
+    prompt: 'LEGO Architecture brick-built model. Chunky LEGO bricks with visible studs, smooth ABS plastic sheen, minifigure-scale. White gradient studio background, product photography style.',
+  },
+  bauhaus: {
+    name: 'Bauhaus Poster',
+    useReference: false,
+    prompt: 'Bauhaus geometric poster art. Reduce to essential geometric forms. Primary colors (red, blue, yellow) plus black/white, flat shapes, sharp edges, no gradients. Modernist aesthetic.',
+  },
+  figurine: {
+    name: 'Plastic Figurine',
+    useReference: true,
+    prompt: 'Miniature isometric plastic figurine, like a detailed board game piece or architectural model. Slightly stylized proportions (a bit chunky/cute). Smooth plastic finish, white background, product photography.',
+  },
+  wesanderson: {
+    name: 'Wes Anderson',
+    useReference: false,
+    prompt: 'Photorealistic Wes Anderson film still. Shot on 35mm film, architecturally sharp and detailed. The house has been repainted and art-directed for the film: walls are now soft peachy-pink, the roof is dusty coral/salmon, trim is cream white. The sky is powder blue, grass is muted sage green. Perfect bilateral symmetry, house dead-center. Soft diffused golden hour lighting. 8K cinematic quality. The Grand Budapest Hotel aesthetic.',
+  },
+  animalcrossing: {
+    name: 'Animal Crossing',
+    useReference: true,
+    prompt: `Animal Crossing style illustration - a soft, hand-drawn storybook scene. NOT a 3D game screenshot.
+
+Art style requirements:
+- Soft, gentle LINE ART with pastel colored outlines (not black)
+- Hand-illustrated, watercolor-like quality
+- Dreamy, whimsical storybook aesthetic
+- Soft pastel color palette with muted tones
+- Gentle gradients and soft shading
+
+Scene composition:
+- The house as the focal point in middle-ground
+- 2-3 CUTE ANTHROPOMORPHIC ANIMAL VILLAGERS in the foreground (foxes, deer, cats, etc. wearing clothes)
+- Lush, illustrated trees with soft, fluffy foliage surrounding the scene
+- A gentle stream, pond, or river in the foreground
+- Stepping stone path leading to the house
+- Soft clouds and warm sunny sky
+- Butterflies, birds, or falling leaves for atmosphere
+
+The overall feeling should be cozy, peaceful, and magical - like a scene from a beloved children's book or Animal Crossing promotional art.`,
+  },
+  ghibli: {
+    name: 'Studio Ghibli',
+    useReference: true,
+    prompt: 'Studio Ghibli anime background painting. Reimagine this house in Miyazaki\'s world - warm afternoon sun, hand-painted textures, lush vegetation, puffy clouds. Show it from a slight angle like an establishing shot. Include all the signature features.',
+  },
+  bobross: {
+    name: 'Bob Ross',
+    useReference: true,
+    prompt: `Bob Ross style oil painting - a naturalistic landscape scene with the house nestled organically in nature.
+
+Painting style:
+- Impressionistic oil painting with VISIBLE BRUSH STROKES
+- Wet-on-wet technique with soft, blended edges
+- Canvas texture visible through the paint
+- Rich, warm color palette
+
+Scene composition (IMPORTANT - naturalistic, not staged):
+- The house viewed from an angle, partially obscured by trees
+- ABUNDANT AUTUMN FOLIAGE - rich oranges, deep reds, golden yellows, rusty browns
+- Deciduous trees with detailed fall leaves surrounding and framing the house
+- A winding stream or creek flowing through the foreground
+- Wildflowers, bushes, and natural ground cover
+- Soft afternoon sunlight filtering through the trees
+- The house should feel like it BELONGS in this natural setting
+
+Avoid:
+- Symmetrical compositions
+- The house being too prominent or centered
+- Sparse, empty areas
+- Overly bright or saturated colors
+
+The painting should feel like a peaceful autumn day - the kind of scene Bob would paint while talking about "happy little trees" and making you feel relaxed.`,
+  },
+  kinkade: {
+    name: 'Thomas Kinkade',
+    useReference: true,
+    prompt: 'Thomas Kinkade "Painter of Light" style painting. Magical golden hour lighting, warm glowing windows emanating cozy light, lush flowering gardens, romantic idealized atmosphere, soft ethereal glow throughout. Nostalgic, heartwarming, Christmas-card beautiful.',
+  },
+  ukiyoe: {
+    name: 'Ukiyo-e Woodblock',
+    useReference: false,
+    prompt: `Traditional Japanese ukiyo-e woodblock print in the style of Hokusai and Hiroshige. Create a COMPLETE COMPOSITION, not just the house.
+
+REQUIRED elements:
+- The house as the central subject but integrated into a larger scene
+- Mount Fuji or mountains visible in the distant background
+- Traditional Japanese figures in period clothing (merchants, travelers, or townspeople) in the foreground or middle ground
+- Japanese calligraphy/kanji text block on the left or right margin (artist signature style)
+- Decorative cartouche with title text
+- Stylized waves, clouds, or wind patterns
+- Cherry blossoms or pine trees framing the scene
+
+Visual style requirements:
+- Flat color areas with BOLD BLACK OUTLINES (no gradients)
+- Limited color palette: indigo blue, rust red, ochre yellow, sage green, cream
+- Visible wood grain texture throughout
+- Bokashi gradient technique on sky
+- Multiple visual planes creating depth
+- Edo period (1603-1868) aesthetic
+
+This should look like it could hang in a museum next to "The Great Wave."`,
+  },
+  travelposter: {
+    name: 'Vintage Travel Poster',
+    useReference: false,
+    prompt: 'Vintage 1950s travel poster illustration. Bold flat colors, simplified geometric shapes, art deco influences, optimistic mid-century modern aesthetic, screen-printed texture, "Visit California" tourism poster style. Warm sunset palette with teal accents.',
+  },
+  richardscarry: {
+    name: 'Richard Scarry',
+    useReference: true,
+    prompt: 'Richard Scarry Busytown children\'s book illustration. Charming hand-drawn style, warm cheerful colors, cross-section cutaway showing interior rooms, tiny anthropomorphic animal residents going about their day, whimsical details everywhere, nostalgic 1970s children\'s book aesthetic.',
+  },
+  lofi: {
+    name: 'Lo-fi Anime',
+    useReference: true,
+    prompt: 'Lo-fi hip hop anime aesthetic illustration. Warm cozy evening lighting, soft purple and orange sunset tones, gentle rain or cherry blossoms falling, peaceful melancholic mood, anime background art style, study girl YouTube channel aesthetic. Relaxing, nostalgic, slightly dreamy.',
+  },
+  cottagecore: {
+    name: 'Cottagecore',
+    useReference: true,
+    prompt: 'Dreamy cottagecore fairy tale illustration. Romanticized overgrown garden, climbing roses and wisteria, soft dappled sunlight through trees, vintage pastoral aesthetic, slightly ethereal and magical atmosphere, wildflower meadow, butterflies and songbirds. Pinterest-perfect rural fantasy.',
+  },
+  hologram: {
+    name: 'Hologram',
+    useReference: true,
+    prompt: 'A futuristic holographic interface displaying this house as a 3D wireframe model. Neon cyan and magenta energy beams outlining the architectural form. Floating data symbols and measurement annotations, transparent glowing layers, luminous edges. Set in a dark high-tech command hub with curved display screens. Sci-fi movie aesthetic, Blade Runner vibes.',
+  },
+};
+
+// Helper to validate styleId
+function isValidStyleId(styleId) {
+  return styleId && typeof styleId === 'string' && ALLOWED_STYLES.hasOwnProperty(styleId);
+}
+
+// Helper to sanitize address input
+function sanitizeAddress(address) {
+  if (!address || typeof address !== 'string') return null;
+  // Remove any potentially dangerous characters, allow only address-like content
+  // Allow letters, numbers, spaces, commas, periods, hashes, and hyphens
+  const sanitized = address.trim().slice(0, 200); // Limit length
+  if (!/^[a-zA-Z0-9\s,.\-#]+$/.test(sanitized)) {
+    return null;
+  }
+  return sanitized;
+}
+
 /**
  * Health check endpoint
  */
@@ -172,8 +337,9 @@ app.get('/api/health', (req, res) => {
 app.get('/api/streetview/metadata', async (req, res) => {
   const { address } = req.query;
 
-  if (!address) {
-    return res.status(400).json({ error: 'Address is required' });
+  const sanitizedAddress = sanitizeAddress(address);
+  if (!sanitizedAddress) {
+    return res.status(400).json({ error: 'Invalid address format' });
   }
 
   if (!GOOGLE_MAPS_API_KEY) {
@@ -185,7 +351,7 @@ app.get('/api/streetview/metadata', async (req, res) => {
   }
 
   try {
-    const metadataUrl = `https://maps.googleapis.com/maps/api/streetview/metadata?location=${encodeURIComponent(address)}&key=${GOOGLE_MAPS_API_KEY}`;
+    const metadataUrl = `https://maps.googleapis.com/maps/api/streetview/metadata?location=${encodeURIComponent(sanitizedAddress || address)}&key=${GOOGLE_MAPS_API_KEY}`;
     const response = await fetch(metadataUrl);
     const data = await response.json();
 
@@ -203,8 +369,9 @@ app.get('/api/streetview/metadata', async (req, res) => {
 app.get('/api/streetview/image', async (req, res) => {
   const { address, size = '640x480', fov = '90', pitch = '10', heading } = req.query;
 
-  if (!address) {
-    return res.status(400).json({ error: 'Address is required' });
+  const sanitizedAddress = sanitizeAddress(address);
+  if (!sanitizedAddress) {
+    return res.status(400).json({ error: 'Invalid address format' });
   }
 
   if (!GOOGLE_MAPS_API_KEY) {
@@ -217,7 +384,7 @@ app.get('/api/streetview/image', async (req, res) => {
 
   try {
     const params = new URLSearchParams({
-      location: address,
+      location: sanitizedAddress,
       size,
       fov,
       pitch,
@@ -244,8 +411,9 @@ app.get('/api/streetview/image', async (req, res) => {
 app.get('/api/streetview/fetch', async (req, res) => {
   const { address, size = '640x480' } = req.query;
 
-  if (!address) {
-    return res.status(400).json({ error: 'Address is required' });
+  const sanitizedAddress = sanitizeAddress(address);
+  if (!sanitizedAddress) {
+    return res.status(400).json({ error: 'Invalid address format' });
   }
 
   if (!GOOGLE_MAPS_API_KEY) {
@@ -257,7 +425,7 @@ app.get('/api/streetview/fetch', async (req, res) => {
   }
 
   try {
-    const imageUrl = `https://maps.googleapis.com/maps/api/streetview?location=${encodeURIComponent(address)}&size=${size}&key=${GOOGLE_MAPS_API_KEY}`;
+    const imageUrl = `https://maps.googleapis.com/maps/api/streetview?location=${encodeURIComponent(sanitizedAddress || address)}&size=${size}&key=${GOOGLE_MAPS_API_KEY}`;
     const response = await fetch(imageUrl);
 
     if (!response.ok) {
@@ -334,74 +502,15 @@ Output ONLY a single paragraph (2-4 sentences) describing the property. Be speci
 
 /**
  * Generate a diorama image using Imagen 3
+ * DISABLED: This endpoint previously accepted raw prompts which is a security risk.
+ * Use /api/generate-v2 with a valid styleId instead.
  */
-app.post('/api/imagen/generate', async (req, res) => {
-  const { prompt, aspectRatio = '1:1' } = req.body;
-
-  if (!prompt) {
-    return res.status(400).json({ error: 'Prompt is required' });
-  }
-
-  if (!GOOGLE_AI_API_KEY) {
-    // Return mock image for testing
-    return res.json({
-      imageUrl: 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=800&q=80',
-      mock: true,
-    });
-  }
-
-  try {
-    // Use Imagen 3 via the Generative AI API
-    // Note: Imagen 3 access requires specific API enablement
-    const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/imagen-3.0-generate-002:predict?key=${GOOGLE_AI_API_KEY}`,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          instances: [{ prompt }],
-          parameters: {
-            sampleCount: 1,
-            aspectRatio,
-            safetyFilterLevel: 'block_only_high',
-            personGeneration: 'dont_allow',
-          },
-        }),
-      }
-    );
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error('Imagen API error:', errorText);
-
-      // Fallback to Gemini image generation if Imagen not available
-      return await generateWithGemini(prompt, res);
-    }
-
-    const data = await response.json();
-
-    if (data.predictions && data.predictions[0]) {
-      const imageData = data.predictions[0].bytesBase64Encoded;
-      res.json({
-        imageBase64: imageData,
-        mimeType: 'image/png',
-        mock: false,
-      });
-    } else {
-      throw new Error('No image generated');
-    }
-  } catch (error) {
-    console.error('Imagen generation error:', error);
-
-    // Try Gemini as fallback
-    try {
-      return await generateWithGemini(prompt, res);
-    } catch (fallbackError) {
-      res.status(500).json({ error: 'Failed to generate image' });
-    }
-  }
+app.post('/api/imagen/generate', (req, res) => {
+  return res.status(410).json({
+    error: 'This endpoint has been disabled for security reasons.',
+    message: 'Please use /api/generate-v2 with a valid styleId parameter.',
+    availableStyles: Object.keys(ALLOWED_STYLES),
+  });
 });
 
 /**
@@ -452,8 +561,9 @@ async function generateWithGemini(prompt, res) {
 app.get('/api/aerialview/fetch', async (req, res) => {
   const { address, size = '640x640', zoom = '19' } = req.query;
 
-  if (!address) {
-    return res.status(400).json({ error: 'Address is required' });
+  const sanitizedAddress = sanitizeAddress(address);
+  if (!sanitizedAddress) {
+    return res.status(400).json({ error: 'Invalid address format' });
   }
 
   if (!GOOGLE_MAPS_API_KEY) {
@@ -465,7 +575,7 @@ app.get('/api/aerialview/fetch', async (req, res) => {
   }
 
   try {
-    const imageUrl = `https://maps.googleapis.com/maps/api/staticmap?center=${encodeURIComponent(address)}&zoom=${zoom}&size=${size}&maptype=satellite&key=${GOOGLE_MAPS_API_KEY}`;
+    const imageUrl = `https://maps.googleapis.com/maps/api/staticmap?center=${encodeURIComponent(sanitizedAddress || address)}&zoom=${zoom}&size=${size}&maptype=satellite&key=${GOOGLE_MAPS_API_KEY}`;
     const response = await fetch(imageUrl);
 
     if (!response.ok) {
@@ -489,13 +599,28 @@ app.get('/api/aerialview/fetch', async (req, res) => {
 
 /**
  * Complete pipeline: Address → Street View + Aerial View → Vision → Image Generation
+ * SECURED: Now requires styleId from allowlist instead of raw stylePrompt
  */
 app.post('/api/generate', async (req, res) => {
-  const { address, stylePrompt } = req.body;
+  const { address, styleId } = req.body;
 
-  if (!address || !stylePrompt) {
-    return res.status(400).json({ error: 'Address and stylePrompt are required' });
+  // Validate styleId against allowlist
+  if (!isValidStyleId(styleId)) {
+    return res.status(400).json({
+      error: 'Invalid or missing styleId',
+      availableStyles: Object.keys(ALLOWED_STYLES),
+    });
   }
+
+  // Sanitize address
+  const sanitizedAddress = sanitizeAddress(address);
+  if (!sanitizedAddress) {
+    return res.status(400).json({ error: 'Invalid address format' });
+  }
+
+  // Get the style prompt from server-side allowlist (cannot be overridden)
+  const styleConfig = ALLOWED_STYLES[styleId];
+  const stylePrompt = styleConfig.prompt;
 
   try {
     // Step 1: Fetch Street View and Aerial View images in parallel
@@ -506,20 +631,20 @@ app.post('/api/generate', async (req, res) => {
 
     if (GOOGLE_MAPS_API_KEY) {
       // Fetch street view
-      const svResponse = await fetch(`https://maps.googleapis.com/maps/api/streetview?location=${encodeURIComponent(address)}&size=640x480&key=${GOOGLE_MAPS_API_KEY}`);
+      const svResponse = await fetch(`https://maps.googleapis.com/maps/api/streetview?location=${encodeURIComponent(sanitizedAddress || address)}&size=640x480&key=${GOOGLE_MAPS_API_KEY}`);
       if (svResponse.ok) {
         const svBuffer = await svResponse.buffer();
         streetViewBase64 = svBuffer.toString('base64');
-        streetViewUrl = `https://maps.googleapis.com/maps/api/streetview?location=${encodeURIComponent(address)}&size=640x480&key=${GOOGLE_MAPS_API_KEY}`;
+        streetViewUrl = `https://maps.googleapis.com/maps/api/streetview?location=${encodeURIComponent(sanitizedAddress || address)}&size=640x480&key=${GOOGLE_MAPS_API_KEY}`;
       }
 
       // Try to fetch aerial view (may fail if Maps Static API not enabled)
       try {
-        const avResponse = await fetch(`https://maps.googleapis.com/maps/api/staticmap?center=${encodeURIComponent(address)}&zoom=19&size=640x640&maptype=satellite&key=${GOOGLE_MAPS_API_KEY}`);
+        const avResponse = await fetch(`https://maps.googleapis.com/maps/api/staticmap?center=${encodeURIComponent(sanitizedAddress || address)}&zoom=19&size=640x640&maptype=satellite&key=${GOOGLE_MAPS_API_KEY}`);
         if (avResponse.ok) {
           const avBuffer = await avResponse.buffer();
           aerialViewBase64 = avBuffer.toString('base64');
-          aerialViewUrl = `https://maps.googleapis.com/maps/api/staticmap?center=${encodeURIComponent(address)}&zoom=19&size=640x640&maptype=satellite&key=${GOOGLE_MAPS_API_KEY}`;
+          aerialViewUrl = `https://maps.googleapis.com/maps/api/staticmap?center=${encodeURIComponent(sanitizedAddress || address)}&zoom=19&size=640x640&maptype=satellite&key=${GOOGLE_MAPS_API_KEY}`;
         } else {
           console.log('Aerial view not available (Maps Static API may not be enabled), using street view only');
         }
@@ -788,6 +913,7 @@ Output ONE detailed paragraph (3-4 sentences). USE SPATIAL LANGUAGE: left/right 
 
 /**
  * V2 Generation Pipeline: Identity + Reference Approach
+ * SECURED: Now requires styleId from allowlist instead of raw stylePrompt
  *
  * This approach:
  * 1. Extracts house "identity" (key recognizable features)
@@ -796,14 +922,29 @@ Output ONE detailed paragraph (3-4 sentences). USE SPATIAL LANGUAGE: left/right 
  * 4. Uses Gemini 2.5 Flash Image (Nano Banana) for generation
  */
 app.post('/api/generate-v2', generationLimiter, async (req, res) => {
-  const { address, styleId, stylePrompt, useReference = true } = req.body;
+  const { address, styleId } = req.body;
 
-  if (!address || !stylePrompt) {
-    return res.status(400).json({ error: 'Address and stylePrompt are required' });
+  // Validate styleId against allowlist
+  if (!isValidStyleId(styleId)) {
+    return res.status(400).json({
+      error: 'Invalid or missing styleId',
+      availableStyles: Object.keys(ALLOWED_STYLES),
+    });
   }
 
+  // Sanitize address
+  const sanitizedAddress = sanitizeAddress(address);
+  if (!sanitizedAddress) {
+    return res.status(400).json({ error: 'Invalid address format' });
+  }
+
+  // Get style config from server-side allowlist (cannot be overridden)
+  const styleConfig = ALLOWED_STYLES[styleId];
+  const stylePrompt = styleConfig.prompt;
+  const useReference = styleConfig.useReference;
+
   // Normalize address for cache key
-  const cacheKey = address.toLowerCase().trim();
+  const cacheKey = sanitizedAddress.toLowerCase().trim();
 
   try {
     // Step 1: Fetch Street View and Aerial View images (with caching)
@@ -815,7 +956,7 @@ app.post('/api/generate-v2', generationLimiter, async (req, res) => {
 
       if (!streetViewBase64) {
         fetchPromises.push(
-          fetch(`https://maps.googleapis.com/maps/api/streetview?location=${encodeURIComponent(address)}&size=640x480&key=${GOOGLE_MAPS_API_KEY}`)
+          fetch(`https://maps.googleapis.com/maps/api/streetview?location=${encodeURIComponent(sanitizedAddress || address)}&size=640x480&key=${GOOGLE_MAPS_API_KEY}`)
             .then(async (r) => {
               if (r.ok) {
                 const b64 = Buffer.from(await r.arrayBuffer()).toString('base64');
@@ -829,7 +970,7 @@ app.post('/api/generate-v2', generationLimiter, async (req, res) => {
 
       if (!aerialViewBase64) {
         fetchPromises.push(
-          fetch(`https://maps.googleapis.com/maps/api/staticmap?center=${encodeURIComponent(address)}&zoom=19&size=640x640&maptype=satellite&key=${GOOGLE_MAPS_API_KEY}`)
+          fetch(`https://maps.googleapis.com/maps/api/staticmap?center=${encodeURIComponent(sanitizedAddress || address)}&zoom=19&size=640x640&maptype=satellite&key=${GOOGLE_MAPS_API_KEY}`)
             .then(async (r) => {
               if (r.ok) {
                 const b64 = Buffer.from(await r.arrayBuffer()).toString('base64');
