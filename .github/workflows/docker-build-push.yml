@@ -1,0 +1,32 @@
+name: Docker Build and Push
+
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - 'v*'
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build-and-push:
+    runs-on: arm-runner-lg-ng
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: ECR login
+        id: ecr-login
+        uses: opendoor-labs/gha/ecr-login@ecr
+
+      - name: Build and push
+        uses: opendoor-labs/gha/build-push@build-push-1.0.0-action
+        with:
+          image_name: growth-diorama
+          image_tag: ${{ github.sha }}
+          dockerfile: ./Dockerfile
+          context: .
+          build_args: '{"NODE_ENV": "production"}'
