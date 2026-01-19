@@ -29,34 +29,48 @@ const STYLES = [
 function DotMatrixBg() {
   return (
     <div className="fixed inset-0 pointer-events-none overflow-hidden">
-      {/* Base dot grid - more visible */}
+      {/* Dot grid with gradient mask for non-uniform effect */}
       <div
         className="absolute inset-0"
         style={{
-          backgroundImage: 'radial-gradient(circle at center, rgba(255,255,255,0.15) 1.5px, transparent 1.5px)',
-          backgroundSize: '16px 16px',
+          backgroundImage: 'radial-gradient(circle at center, rgba(255,255,255,0.12) 1px, transparent 1px)',
+          backgroundSize: '10px 10px',
+          maskImage: 'radial-gradient(ellipse 120% 100% at 50% 0%, black 0%, transparent 70%)',
+          WebkitMaskImage: 'radial-gradient(ellipse 120% 100% at 50% 0%, black 0%, transparent 70%)',
         }}
       />
-      {/* Secondary smaller dots for texture */}
+      {/* Second dot layer with different gradient direction */}
       <div
         className="absolute inset-0"
         style={{
           backgroundImage: 'radial-gradient(circle at center, rgba(255,255,255,0.08) 1px, transparent 1px)',
-          backgroundSize: '8px 8px',
+          backgroundSize: '10px 10px',
+          maskImage: 'radial-gradient(ellipse 100% 80% at 80% 100%, black 0%, transparent 60%)',
+          WebkitMaskImage: 'radial-gradient(ellipse 100% 80% at 80% 100%, black 0%, transparent 60%)',
+        }}
+      />
+      {/* Subtle center highlight dots */}
+      <div
+        className="absolute inset-0"
+        style={{
+          backgroundImage: 'radial-gradient(circle at center, rgba(255,255,255,0.06) 1px, transparent 1px)',
+          backgroundSize: '10px 10px',
+          maskImage: 'radial-gradient(circle at 50% 50%, black 0%, transparent 50%)',
+          WebkitMaskImage: 'radial-gradient(circle at 50% 50%, black 0%, transparent 50%)',
         }}
       />
       {/* Accent glow in top-right */}
       <div
         className="absolute -top-1/4 -right-1/4 w-3/4 h-3/4"
         style={{
-          background: 'radial-gradient(circle, rgba(0, 116, 228, 0.25) 0%, transparent 50%)',
+          background: 'radial-gradient(circle, rgba(0, 116, 228, 0.2) 0%, transparent 50%)',
         }}
       />
       {/* Coral glow in bottom-left */}
       <div
-        className="absolute -bottom-1/4 -left-1/4 w-3/4 h-3/4"
+        className="absolute -bottom-1/4 -left-1/4 w-1/2 h-1/2"
         style={{
-          background: 'radial-gradient(circle, rgba(255, 107, 74, 0.15) 0%, transparent 50%)',
+          background: 'radial-gradient(circle, rgba(255, 107, 74, 0.12) 0%, transparent 50%)',
         }}
       />
     </div>
