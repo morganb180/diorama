@@ -305,9 +305,9 @@ function isValidStyleId(styleId) {
 function sanitizeAddress(address) {
   if (!address || typeof address !== 'string') return null;
   // Remove any potentially dangerous characters, allow only address-like content
-  // Allow letters, numbers, spaces, commas, periods, hashes, and hyphens
+  // Allow: letters, numbers, spaces, commas, periods, hashes, hyphens, apostrophes, slashes, ampersands, parentheses
   const sanitized = address.trim().slice(0, 200); // Limit length
-  if (!/^[a-zA-Z0-9\s,.\-#]+$/.test(sanitized)) {
+  if (!/^[a-zA-Z0-9\s,.\-#'\/&()]+$/.test(sanitized)) {
     return null;
   }
   return sanitized;
