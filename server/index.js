@@ -461,12 +461,26 @@ function isValidStyleId(styleId) {
 function sanitizeAddress(address) {
   if (!address || typeof address !== 'string') return null;
   // Remove any potentially dangerous characters, allow only address-like content
-  // Allow: letters (including accented/international), numbers, spaces, commas, periods, hashes, hyphens, apostrophes, slashes, ampersands, parentheses
+  // Allow: letters (including accented/Polish), numbers, spaces, commas, periods, hashes, hyphens, apostrophes, slashes, ampersands, parentheses
   const sanitized = address.trim().slice(0, 200); // Limit length
-  // Use Unicode property escapes for letters (\p{L}) to support international addresses (Polish, German, French, etc.)
+  // Use Unicode property escapes for letters (\p{L}) to support Polish addresses
   if (!/^[\p{L}0-9\s,.\-#'\/&()]+$/u.test(sanitized)) {
     return null;
   }
+
+  // Restrict to US and Poland only (business requirement - only monetizable in US, Poland for team testing)
+  const upperAddress = sanitized.toUpperCase();
+  const isUS = upperAddress.includes('USA') ||
+               upperAddress.includes('UNITED STATES') ||
+               /\b[A-Z]{2}\s+\d{5}(-\d{4})?\b/.test(upperAddress); // US state + zip pattern
+  const isPoland = upperAddress.includes('POLAND') ||
+                   upperAddress.includes('POLSKA') ||
+                   /\b\d{2}-\d{3}\b/.test(sanitized); // Polish postal code pattern (XX-XXX)
+
+  if (!isUS && !isPoland) {
+    return null;
+  }
+
   return sanitized;
 }
 
