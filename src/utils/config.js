@@ -75,7 +75,22 @@ export const STYLES = {
     bgColor: 'rgba(26, 26, 26, 0.1)',
     icon: '🎨',
     useReference: false, // Needs creative freedom for geometric abstraction
-    promptV2: 'Bauhaus geometric poster art. Reduce to essential geometric forms. Primary colors (red, blue, yellow) plus black/white, flat shapes, sharp edges, no gradients. Modernist aesthetic.',
+    promptV2: `TRANSFORM this house into a Bauhaus geometric poster illustration.
+
+MANDATORY BAUHAUS STYLE:
+- Reduce the house to PURE GEOMETRIC SHAPES: circles, squares, rectangles, triangles
+- FLAT colors only - NO gradients, NO shading, NO 3D effects
+- Limited palette: red, blue, yellow, black, white, and cream/tan
+- Bold black outlines separating color blocks
+- Asymmetric but balanced composition
+
+IMPORTANT:
+- DO NOT include any text, words, labels, or typography
+- DO NOT include "house identity card" or any descriptions
+- ONLY create the geometric illustration of the house
+- Think: Kandinsky, Mondrian abstract art style
+
+Create ONLY the geometric artwork - no text whatsoever.`,
   },
   figurine: {
     id: 'figurine',
@@ -279,23 +294,50 @@ This should look like it could hang in a museum next to "The Great Wave."`,
     bgColor: 'rgba(146, 204, 65, 0.1)',
     icon: '👾',
     useReference: true,
-    promptV2: `8-bit NES-style pixel art of this house. Classic Nintendo Entertainment System aesthetic from the 1980s.
+    promptV2: `TRANSFORM this house into retro 8-bit pixel art. DO NOT create a realistic photo.
 
-Technical requirements:
-- CHUNKY, BLOCKY PIXELS clearly visible (low resolution look)
-- Strict limited color palette: maximum 4 colors per sprite, ~25 total colors
-- Classic NES colors: muted greens, browns, sky blue, brick red, tan, black outlines
-- NO anti-aliasing, NO gradients - hard pixel edges only
-- Dithering patterns for shading (checkerboard, horizontal lines)
+MANDATORY STYLE - This MUST look like a Nintendo NES video game from 1985:
+- LARGE CHUNKY PIXELS (like Minecraft blocks but 2D)
+- ONLY 16-25 colors total, no smooth gradients
+- BLACK pixel outlines around everything
+- Flat colors with dithering patterns for shading
+- Simplified blocky shapes - squares and rectangles only
 
-Visual style:
-- Side-scrolling platformer game perspective (slight 3/4 view)
-- Black or solid color background (like classic NES games)
-- Simplified architectural details reduced to essential pixel shapes
-- Reminiscent of games like Super Mario Bros, Zelda, or Mega Man
-- 8-bit era charm with recognizable but simplified house features
+OUTPUT REQUIREMENTS:
+- The house should be recognizable but heavily pixelated
+- Sky should be a solid color or simple pixel gradient
+- Ground/grass as simple green pixel rows
+- NO photorealism - this must look like a retro video game sprite
+- Think: buildings from Super Mario Bros, Zelda, or Mega Man
 
-The result should look like it could be a building from an actual NES cartridge game from 1985-1990.`,
+Create an 8-bit pixel art sprite of this house, NOT a photograph.`,
+  },
+  coloringsheet: {
+    id: 'coloringsheet',
+    name: 'Coloring Sheet',
+    shortName: 'Coloring',
+    description: 'Black & white coloring page',
+    color: '#333333',
+    bgColor: 'rgba(51, 51, 51, 0.1)',
+    icon: '✏️',
+    useReference: true,
+    promptV2: `Create a coloring book page of this house for children to color in.
+
+MANDATORY STYLE:
+- BLACK OUTLINES ONLY on pure white background
+- NO filled colors, NO shading, NO gray tones
+- Clean, clear line art suitable for a child to color
+- Lines should be thick enough for small hands (2-3px weight)
+- Simple, friendly style - not too detailed or complex
+
+COMPOSITION:
+- The house as the main subject, clearly outlined
+- Include some simple landscaping elements (trees, bushes, flowers as outlines)
+- Add a simple sun, clouds, or birds as outline shapes
+- Maybe a path leading to the house
+- Keep shapes simple and easy to color within
+
+This should look like a page from a children's coloring book - pure black line art on white, ready to be colored in with crayons or markers.`,
   },
   crayon: {
     id: 'crayon',

@@ -16,6 +16,80 @@ const PORT = process.env.PORT || 3001;
 app.set('trust proxy', 1);
 
 // ============================================
+// GENERATION LOGGING
+// ============================================
+
+const GENERATION_LOG_FILE = path.join(process.cwd(), 'generations.jsonl');
+
+// Cost estimates per generation (in USD)
+const COST_ESTIMATES = {
+  streetView: 0.007,      // $7 per 1000 requests
+  staticMap: 0.002,       // $2 per 1000 requests
+  visionAnalysis: 0.003,  // Gemini 2.5 Flash vision (upgraded from 2.0)
+  imageGeneration: 0.039, // Gemini 2.5 Flash Image ($30/1M tokens, ~1290 tokens/image)
+};
+const ESTIMATED_COST_PER_GENERATION = Object.values(COST_ESTIMATES).reduce((a, b) => a + b, 0);
+
+function logGeneration({ address, styleId, success, durationMs, error = null, cached = {} }) {
+  const logEntry = {
+    timestamp: new Date().toISOString(),
+    address: address ? address.substring(0, 100) : 'unknown', // Truncate for privacy
+    styleId,
+    success,
+    durationMs,
+    error: error ? error.substring(0, 200) : null,
+    cached, // { streetView: bool, aerial: bool, identity: bool }
+    estimatedCost: success ? ESTIMATED_COST_PER_GENERATION : 0,
+  };
+
+  try {
+    fs.appendFileSync(GENERATION_LOG_FILE, JSON.stringify(logEntry) + '\n');
+  } catch (err) {
+    console.error('Failed to log generation:', err.message);
+  }
+}
+
+function getGenerationStats() {
+  try {
+    if (!fs.existsSync(GENERATION_LOG_FILE)) {
+      return { total: 0, successful: 0, failed: 0, totalCost: 0, byStyle: {}, recentGenerations: [] };
+    }
+
+    const lines = fs.readFileSync(GENERATION_LOG_FILE, 'utf-8').trim().split('\n').filter(Boolean);
+    const entries = lines.map(line => {
+      try { return JSON.parse(line); } catch { return null; }
+    }).filter(Boolean);
+
+    const successful = entries.filter(e => e.success);
+    const failed = entries.filter(e => !e.success);
+    const totalCost = entries.reduce((sum, e) => sum + (e.estimatedCost || 0), 0);
+
+    const byStyle = {};
+    entries.forEach(e => {
+      if (!byStyle[e.styleId]) byStyle[e.styleId] = { count: 0, cost: 0 };
+      byStyle[e.styleId].count++;
+      byStyle[e.styleId].cost += e.estimatedCost || 0;
+    });
+
+    return {
+      total: entries.length,
+      successful: successful.length,
+      failed: failed.length,
+      totalCost: Math.round(totalCost * 1000) / 1000,
+      costPerGeneration: entries.length > 0 ? Math.round((totalCost / entries.length) * 1000) / 1000 : 0,
+      byStyle,
+      avgDurationMs: successful.length > 0
+        ? Math.round(successful.reduce((sum, e) => sum + (e.durationMs || 0), 0) / successful.length)
+        : 0,
+      recentGenerations: entries.slice(-10).reverse(),
+    };
+  } catch (err) {
+    console.error('Failed to get generation stats:', err.message);
+    return { error: err.message };
+  }
+}
+
+// ============================================
 // RATE LIMITING
 // ============================================
 
@@ -172,7 +246,22 @@ const ALLOWED_STYLES = {
   bauhaus: {
     name: 'Bauhaus Poster',
     useReference: false,
-    prompt: 'Bauhaus geometric poster art. Reduce to essential geometric forms. Primary colors (red, blue, yellow) plus black/white, flat shapes, sharp edges, no gradients. Modernist aesthetic.',
+    prompt: `TRANSFORM this house into a Bauhaus geometric poster illustration.
+
+MANDATORY BAUHAUS STYLE:
+- Reduce the house to PURE GEOMETRIC SHAPES: circles, squares, rectangles, triangles
+- FLAT colors only - NO gradients, NO shading, NO 3D effects
+- Limited palette: red, blue, yellow, black, white, and cream/tan
+- Bold black outlines separating color blocks
+- Asymmetric but balanced composition
+
+IMPORTANT:
+- DO NOT include any text, words, labels, or typography
+- DO NOT include "house identity card" or any descriptions
+- ONLY create the geometric illustration of the house
+- Think: Kandinsky, Mondrian abstract art style
+
+Create ONLY the geometric artwork - no text whatsoever.`,
   },
   figurine: {
     name: 'Plastic Figurine',
@@ -297,23 +386,44 @@ This should look like it could hang in a museum next to "The Great Wave."`,
   eightbit: {
     name: '8-Bit NES',
     useReference: true,
-    prompt: `8-bit NES-style pixel art of this house. Classic Nintendo Entertainment System aesthetic from the 1980s.
+    prompt: `TRANSFORM this house into retro 8-bit pixel art. DO NOT create a realistic photo.
 
-Technical requirements:
-- CHUNKY, BLOCKY PIXELS clearly visible (low resolution look)
-- Strict limited color palette: maximum 4 colors per sprite, ~25 total colors
-- Classic NES colors: muted greens, browns, sky blue, brick red, tan, black outlines
-- NO anti-aliasing, NO gradients - hard pixel edges only
-- Dithering patterns for shading (checkerboard, horizontal lines)
+MANDATORY STYLE - This MUST look like a Nintendo NES video game from 1985:
+- LARGE CHUNKY PIXELS (like Minecraft blocks but 2D)
+- ONLY 16-25 colors total, no smooth gradients
+- BLACK pixel outlines around everything
+- Flat colors with dithering patterns for shading
+- Simplified blocky shapes - squares and rectangles only
 
-Visual style:
-- Side-scrolling platformer game perspective (slight 3/4 view)
-- Black or solid color background (like classic NES games)
-- Simplified architectural details reduced to essential pixel shapes
-- Reminiscent of games like Super Mario Bros, Zelda, or Mega Man
-- 8-bit era charm with recognizable but simplified house features
+OUTPUT REQUIREMENTS:
+- The house should be recognizable but heavily pixelated
+- Sky should be a solid color or simple pixel gradient
+- Ground/grass as simple green pixel rows
+- NO photorealism - this must look like a retro video game sprite
+- Think: buildings from Super Mario Bros, Zelda, or Mega Man
 
-The result should look like it could be a building from an actual NES cartridge game from 1985-1990.`,
+Create an 8-bit pixel art sprite of this house, NOT a photograph.`,
+  },
+  coloringsheet: {
+    name: 'Coloring Sheet',
+    useReference: true,
+    prompt: `Create a coloring book page of this house for children to color in.
+
+MANDATORY STYLE:
+- BLACK OUTLINES ONLY on pure white background
+- NO filled colors, NO shading, NO gray tones
+- Clean, clear line art suitable for a child to color
+- Lines should be thick enough for small hands (2-3px weight)
+- Simple, friendly style - not too detailed or complex
+
+COMPOSITION:
+- The house as the main subject, clearly outlined
+- Include some simple landscaping elements (trees, bushes, flowers as outlines)
+- Add a simple sun, clouds, or birds as outline shapes
+- Maybe a path leading to the house
+- Keep shapes simple and easy to color within
+
+This should look like a page from a children's coloring book - pure black line art on white, ready to be colored in with crayons or markers.`,
   },
   crayon: {
     name: 'Crayon Drawing',
@@ -374,6 +484,15 @@ app.get('/api/health', (req, res) => {
       identity: identityCache.cache.size,
     },
   });
+});
+
+/**
+ * Get generation statistics
+ * Returns counts, costs, and breakdown by style
+ */
+app.get('/api/stats', (req, res) => {
+  const stats = getGenerationStats();
+  res.json(stats);
 });
 
 /**
@@ -968,7 +1087,9 @@ Output ONE detailed paragraph (3-4 sentences). USE SPATIAL LANGUAGE: left/right 
  * 4. Uses Gemini 2.5 Flash Image (Nano Banana) for generation
  */
 app.post('/api/generate-v2', generationLimiter, async (req, res) => {
+  const startTime = Date.now();
   const { address, styleId } = req.body;
+  const cachedResources = { streetView: false, aerial: false, identity: false };
 
   // Validate styleId against allowlist
   if (!isValidStyleId(styleId)) {
@@ -996,6 +1117,8 @@ app.post('/api/generate-v2', generationLimiter, async (req, res) => {
     // Step 1: Fetch Street View and Aerial View images (with caching)
     let streetViewBase64 = streetViewCache.get(cacheKey);
     let aerialViewBase64 = aerialViewCache.get(cacheKey);
+    cachedResources.streetView = !!streetViewBase64;
+    cachedResources.aerial = !!aerialViewBase64;
 
     if (GOOGLE_MAPS_API_KEY && (!streetViewBase64 || !aerialViewBase64)) {
       const fetchPromises = [];
@@ -1041,9 +1164,10 @@ app.post('/api/generate-v2', generationLimiter, async (req, res) => {
 
     // Step 2: Extract House Identity (with caching)
     let identity = identityCache.get(cacheKey);
+    cachedResources.identity = !!identity;
 
     if (!identity && genAI) {
-      const visionModel = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
+      const visionModel = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
 
       const identityPrompt = `Extract this house's IDENTITY - the features that make it instantly recognizable.
 
@@ -1195,6 +1319,15 @@ Generate now.`;
       return { generatedImage, mock };
     });
 
+    // Log successful generation
+    logGeneration({
+      address: sanitizedAddress,
+      styleId,
+      success: true,
+      durationMs: Date.now() - startTime,
+      cached: cachedResources,
+    });
+
     res.json({
       success: true,
       identity,
@@ -1204,6 +1337,17 @@ Generate now.`;
     });
   } catch (error) {
     console.error('V2 Generation pipeline error:', error);
+
+    // Log failed generation
+    logGeneration({
+      address: sanitizedAddress || address,
+      styleId,
+      success: false,
+      durationMs: Date.now() - startTime,
+      error: error.message,
+      cached: cachedResources,
+    });
+
     res.status(500).json({ error: 'Generation failed', details: error.message });
   }
 });

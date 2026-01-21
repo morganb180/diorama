@@ -20,30 +20,26 @@ const REFERENCE = {
   address: '1491 Mill Run Rd, Mill Run, PA 15464',
 };
 
-// Crayon style
+// Coloring Sheet style
 const STYLE = {
-  id: 'crayon',
-  prompt: `A child's crayon drawing of this house, like a middle schooler's art project.
+  id: 'coloringsheet',
+  prompt: `Create a coloring book page of this house for children to color in.
 
-Style requirements:
-- Drawn with WAX CRAYONS on white construction paper
-- Visible waxy crayon texture with uneven color fill
-- Wobbly, imperfect hand-drawn lines (not straight)
-- Colors slightly outside the lines
-- Heavy crayon pressure in some areas, light in others
-- Layered crayon strokes visible
+MANDATORY STYLE:
+- BLACK OUTLINES ONLY on pure white background
+- NO filled colors, NO shading, NO gray tones
+- Clean, clear line art suitable for a child to color
+- Lines should be thick enough for small hands (2-3px weight)
+- Simple, friendly style - not too detailed or complex
 
-Childlike characteristics:
-- Simplified shapes and proportions
-- Bright, cheerful primary colors (red, blue, yellow, green, orange)
-- Sun with rays in the corner
-- Fluffy cloud shapes
-- Green grass drawn as a strip at the bottom
-- Maybe a stick figure family or pet in the yard
-- Flowers as simple circles with stems
-- Birds as simple "M" shapes in the sky
+COMPOSITION:
+- The house as the main subject, clearly outlined
+- Include some simple landscaping elements (trees, bushes, flowers as outlines)
+- Add a simple sun, clouds, or birds as outline shapes
+- Maybe a path leading to the house
+- Keep shapes simple and easy to color within
 
-The drawing should feel authentic - like something a 10-12 year old would proudly bring home from art class. Charming imperfections, not polished.`,
+This should look like a page from a children's coloring book - pure black line art on white, ready to be colored in with crayons or markers.`,
   useRef: true,
 };
 
@@ -72,7 +68,7 @@ async function extractIdentity(streetViewBase64, aerialViewBase64) {
 }
 
 async function generateStyleSample(identity, images) {
-  console.log('🖍️ Generating Crayon style...');
+  console.log('✏️ Generating Coloring Sheet style...');
   const model = genAI.getGenerativeModel({
     model: 'gemini-2.5-flash-image',
     generationConfig: { responseModalities: ['image', 'text'] },
@@ -98,7 +94,7 @@ Study the reference photos and create this building in the specified style. Gene
 }
 
 async function main() {
-  console.log('🖍️ CRAYON STYLE SAMPLE GENERATOR\n');
+  console.log('✏️ COLORING SHEET STYLE SAMPLE GENERATOR\n');
 
   const outputDir = './public/style-samples';
   if (!fs.existsSync(outputDir)) {

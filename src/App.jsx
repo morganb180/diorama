@@ -24,6 +24,7 @@ const STYLES = [
   { id: 'richardscarry', name: 'Richard Scarry', sample: '/style-samples/richardscarry.png' },
   { id: 'hologram', name: 'Hologram', sample: '/style-samples/hologram.png' },
   { id: 'eightbit', name: '8-Bit NES', sample: '/style-samples/eightbit.png' },
+  { id: 'coloringsheet', name: 'Coloring Sheet', sample: '/style-samples/coloringsheet.png' },
   { id: 'crayon', name: 'Crayon', sample: '/style-samples/crayon.png' },
 ];
 
