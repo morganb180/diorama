@@ -294,6 +294,52 @@ This should look like it could hang in a museum next to "The Great Wave."`,
     useReference: true,
     prompt: 'A futuristic holographic interface displaying this house as a 3D wireframe model. Neon cyan and magenta energy beams outlining the architectural form. Floating data symbols and measurement annotations, transparent glowing layers, luminous edges. Set in a dark high-tech command hub with curved display screens. Sci-fi movie aesthetic, Blade Runner vibes.',
   },
+  eightbit: {
+    name: '8-Bit NES',
+    useReference: true,
+    prompt: `8-bit NES-style pixel art of this house. Classic Nintendo Entertainment System aesthetic from the 1980s.
+
+Technical requirements:
+- CHUNKY, BLOCKY PIXELS clearly visible (low resolution look)
+- Strict limited color palette: maximum 4 colors per sprite, ~25 total colors
+- Classic NES colors: muted greens, browns, sky blue, brick red, tan, black outlines
+- NO anti-aliasing, NO gradients - hard pixel edges only
+- Dithering patterns for shading (checkerboard, horizontal lines)
+
+Visual style:
+- Side-scrolling platformer game perspective (slight 3/4 view)
+- Black or solid color background (like classic NES games)
+- Simplified architectural details reduced to essential pixel shapes
+- Reminiscent of games like Super Mario Bros, Zelda, or Mega Man
+- 8-bit era charm with recognizable but simplified house features
+
+The result should look like it could be a building from an actual NES cartridge game from 1985-1990.`,
+  },
+  crayon: {
+    name: 'Crayon Drawing',
+    useReference: true,
+    prompt: `A child's crayon drawing of this house, like a middle schooler's art project.
+
+Style requirements:
+- Drawn with WAX CRAYONS on white construction paper
+- Visible waxy crayon texture with uneven color fill
+- Wobbly, imperfect hand-drawn lines (not straight)
+- Colors slightly outside the lines
+- Heavy crayon pressure in some areas, light in others
+- Layered crayon strokes visible
+
+Childlike characteristics:
+- Simplified shapes and proportions
+- Bright, cheerful primary colors (red, blue, yellow, green, orange)
+- Sun with rays in the corner
+- Fluffy cloud shapes
+- Green grass drawn as a strip at the bottom
+- Maybe a stick figure family or pet in the yard
+- Flowers as simple circles with stems
+- Birds as simple "M" shapes in the sky
+
+The drawing should feel authentic - like something a 10-12 year old would proudly bring home from art class. Charming imperfections, not polished.`,
+  },
 };
 
 // Helper to validate styleId

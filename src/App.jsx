@@ -23,6 +23,8 @@ const STYLES = [
   { id: 'figurine', name: 'Figurine', sample: '/style-samples/figurine.png' },
   { id: 'richardscarry', name: 'Richard Scarry', sample: '/style-samples/richardscarry.png' },
   { id: 'hologram', name: 'Hologram', sample: '/style-samples/hologram.png' },
+  { id: 'eightbit', name: '8-Bit NES', sample: '/style-samples/eightbit.png' },
+  { id: 'crayon', name: 'Crayon', sample: '/style-samples/crayon.png' },
 ];
 
 // Dot matrix background component
