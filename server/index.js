@@ -47,11 +47,12 @@ const FAMOUS_HOMES_FALLBACK = [
 function getRandomFamousHomeFallback(styleId) {
   const home = FAMOUS_HOMES_FALLBACK[Math.floor(Math.random() * FAMOUS_HOMES_FALLBACK.length)];
   const filename = `${home.id}-${styleId}.png`;
-  const filepath = path.join(process.cwd(), 'launch-assets-watermarked', filename);
+  // Use non-watermarked images - client adds watermark on display/save
+  const filepath = path.join(process.cwd(), 'launch-assets', filename);
 
   // Check if this style exists for this home, fallback to diorama if not
   if (!fs.existsSync(filepath)) {
-    const dioramaPath = path.join(process.cwd(), 'launch-assets-watermarked', `${home.id}-diorama.png`);
+    const dioramaPath = path.join(process.cwd(), 'launch-assets', `${home.id}-diorama.png`);
     if (fs.existsSync(dioramaPath)) {
       return {
         home,
