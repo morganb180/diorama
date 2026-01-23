@@ -10,6 +10,7 @@ const GALLERY_DATA = [
     styles: [
       { id: 'diorama', name: 'Diorama', image: '/gallery/white-house-diorama.png' },
       { id: 'ghibli', name: 'Ghibli', image: '/gallery/white-house-ghibli.png' },
+      { id: 'lofi', name: 'Lo-Fi', image: '/gallery/white-house-lofi.png' },
     ],
   },
   {
@@ -19,6 +20,7 @@ const GALLERY_DATA = [
     styles: [
       { id: 'diorama', name: 'Diorama', image: '/gallery/fallingwater-diorama.png' },
       { id: 'ghibli', name: 'Ghibli', image: '/gallery/fallingwater-ghibli.png' },
+      { id: 'lofi', name: 'Lo-Fi', image: '/gallery/fallingwater-lofi.png' },
     ],
   },
   {
@@ -28,6 +30,7 @@ const GALLERY_DATA = [
     styles: [
       { id: 'diorama', name: 'Diorama', image: '/gallery/gamble-house-diorama.png' },
       { id: 'ghibli', name: 'Ghibli', image: '/gallery/gamble-house-ghibli.png' },
+      { id: 'lofi', name: 'Lo-Fi', image: '/gallery/gamble-house-lofi.png' },
     ],
   },
   {
@@ -37,6 +40,7 @@ const GALLERY_DATA = [
     styles: [
       { id: 'diorama', name: 'Diorama', image: '/gallery/graceland-diorama.png' },
       { id: 'ghibli', name: 'Ghibli', image: '/gallery/graceland-ghibli.png' },
+      { id: 'lofi', name: 'Lo-Fi', image: '/gallery/graceland-lofi.png' },
     ],
   },
 ];
@@ -138,7 +142,7 @@ export function FamousHomesGallery() {
           See it in action
         </h2>
         <p className="text-sm text-gray-500">
-          Famous homes transformed into art
+          Famous homes transformed
         </p>
       </div>
 
@@ -163,6 +167,16 @@ export function FamousHomesGallery() {
           }`}
         >
           Ghibli
+        </button>
+        <button
+          onClick={() => setSelectedStyle('lofi')}
+          className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
+            selectedStyle === 'lofi'
+              ? 'bg-blue-500 text-white'
+              : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+          }`}
+        >
+          Lo-Fi
         </button>
       </div>
 

@@ -450,6 +450,27 @@ Childlike characteristics:
 
 The drawing should feel authentic - like something a 10-12 year old would proudly bring home from art class. Charming imperfections, not polished.`,
   },
+  openarmy: {
+    name: 'Open Army',
+    useReference: true,
+    prompt: `1980s military action figure playset style, like a GI Joe or Army Men headquarters.
+
+Style requirements:
+- Molded plastic toy aesthetic with painted details
+- Military color palette: tan, olive drab, gray, brown camo patterns
+- The house transformed into a covert ops command center or military base
+- Detailed accessories: sandbags, camo netting, radar dish, antenna arrays
+- Isometric view showing the full base layout
+
+Toy characteristics:
+- Visible plastic texture and seams like injection-molded toys
+- Hand-painted details with slight imperfections
+- Product photography style on clean white background
+- Like a vintage 1980s Hasbro toy catalog photo
+- Could include a small soldier figure for scale
+
+Make it look like a collectible military playset that a kid in the 80s would have wanted for Christmas.`,
+  },
 };
 
 // Helper to validate styleId
