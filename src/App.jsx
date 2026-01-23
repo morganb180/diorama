@@ -92,12 +92,26 @@ function ChatGPTIcon({ className = "w-10 h-10" }) {
 }
 
 function ClaudeIcon({ className = "w-10 h-10" }) {
+  // Claude starburst logo - organic rays emanating from center
   return (
     <svg className={className} viewBox="0 0 24 24" fill="currentColor">
-      <path d="M12 2L12.9 4.8L15.5 3.5L14.2 6.1L17 7L14.2 7.9L15.5 10.5L12.9 9.2L12 12L11.1 9.2L8.5 10.5L9.8 7.9L7 7L9.8 6.1L8.5 3.5L11.1 4.8L12 2Z"/>
-      <path d="M12 12L12.9 14.8L15.5 13.5L14.2 16.1L17 17L14.2 17.9L15.5 20.5L12.9 19.2L12 22L11.1 19.2L8.5 20.5L9.8 17.9L7 17L9.8 16.1L8.5 13.5L11.1 14.8L12 12Z"/>
-      <path d="M4 9L4.6 10.9L6.5 10L5.6 11.9L7.5 12.5L5.6 13.1L6.5 15L4.6 14.1L4 16L3.4 14.1L1.5 15L2.4 13.1L0.5 12.5L2.4 11.9L1.5 10L3.4 10.9L4 9Z"/>
-      <path d="M20 9L20.6 10.9L22.5 10L21.6 11.9L23.5 12.5L21.6 13.1L22.5 15L20.6 14.1L20 16L19.4 14.1L17.5 15L18.4 13.1L16.5 12.5L18.4 11.9L17.5 10L19.4 10.9L20 9Z"/>
+      <circle cx="12" cy="12" r="1.5"/>
+      <path d="M12 2.5 L12.4 6.5 L11.6 6.5 Z" />
+      <path d="M12 21.5 L12.4 17.5 L11.6 17.5 Z" />
+      <path d="M2.5 12 L6.5 12.4 L6.5 11.6 Z" />
+      <path d="M21.5 12 L17.5 12.4 L17.5 11.6 Z" />
+      <path d="M4.58 4.58 L7.4 7 L6.8 7.6 Z" />
+      <path d="M19.42 19.42 L16.6 17 L17.2 16.4 Z" />
+      <path d="M4.58 19.42 L7 16.6 L7.6 17.2 Z" />
+      <path d="M19.42 4.58 L17 7.4 L16.4 6.8 Z" />
+      <path d="M8.5 3.5 L9.2 7 L8.4 7.2 Z" />
+      <path d="M15.5 20.5 L14.8 17 L15.6 16.8 Z" />
+      <path d="M3.5 15.5 L7 14.8 L7.2 15.6 Z" />
+      <path d="M20.5 8.5 L17 9.2 L16.8 8.4 Z" />
+      <path d="M3.5 8.5 L7 8.8 L7.2 8 Z" />
+      <path d="M20.5 15.5 L17 15.2 L16.8 16 Z" />
+      <path d="M8.5 20.5 L8.8 17 L8 16.8 Z" />
+      <path d="M15.5 3.5 L15.2 7 L16 7.2 Z" />
     </svg>
   );
 }
@@ -110,6 +124,15 @@ function GeminiIcon({ className = "w-10 h-10" }) {
   );
 }
 
+function GrokIcon({ className = "w-10 h-10" }) {
+  // Grok logo - stylized X
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="currentColor">
+      <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+    </svg>
+  );
+}
+
 // Ask AI Section
 const AI_PROMPT = "As a homeseller, I want to concretely understand the benefits of selling my home with Opendoor. Detail what Opendoor's Cash and Cash Plus products are, how the process works, what I can expect in terms of timeline, process, etc. Highlight the benefits compared to a traditional real estate sale. Share use cases where selling to Opendoor makes sense, such as moving on a tight timeline for a job relocation. Explain it simply, as if you were describing the real experience of the service.";
 
@@ -117,7 +140,7 @@ const AI_SERVICES = [
   {
     name: 'ChatGPT',
     icon: ChatGPTIcon,
-    url: `https://chat.openai.com/?q=${encodeURIComponent(AI_PROMPT)}`,
+    url: `https://chatgpt.com/?q=${encodeURIComponent(AI_PROMPT)}`,
   },
   {
     name: 'Claude',
@@ -127,11 +150,26 @@ const AI_SERVICES = [
   {
     name: 'Gemini',
     icon: GeminiIcon,
-    url: `https://gemini.google.com/app?q=${encodeURIComponent(AI_PROMPT)}`,
+    url: `https://gemini.google.com/app`,
+  },
+  {
+    name: 'Grok',
+    icon: GrokIcon,
+    url: `https://grok.x.ai/?q=${encodeURIComponent(AI_PROMPT)}`,
   },
 ];
 
 function AskAISection() {
+  const handleAIClick = async (service) => {
+    // Copy prompt to clipboard for services that may not support URL params
+    try {
+      await navigator.clipboard.writeText(AI_PROMPT);
+    } catch (e) {
+      // Clipboard not available, continue anyway
+    }
+    window.open(service.url, '_blank');
+  };
+
   return (
     <section className="relative z-10 py-16 px-6">
       <div className="max-w-2xl mx-auto text-center">
@@ -139,21 +177,24 @@ function AskAISection() {
           <h2 className="text-xl md:text-2xl font-display font-semibold text-white mb-6 leading-relaxed">
             Want to learn more? Ask AI for a summary of Opendoor and how we can help you sell your home.
           </h2>
-          <div className="flex items-center justify-center gap-6">
+          <div className="flex items-center justify-center gap-4 md:gap-6">
             {AI_SERVICES.map((service) => (
               <button
                 key={service.name}
-                onClick={() => window.open(service.url, '_blank')}
+                onClick={() => handleAIClick(service)}
                 className="group flex flex-col items-center gap-2 p-3 rounded-xl hover:bg-white/10 transition-all"
                 title={`Ask ${service.name}`}
               >
-                <service.icon className="w-10 h-10 text-white/70 group-hover:text-white transition-colors" />
+                <service.icon className="w-8 h-8 md:w-10 md:h-10 text-white/70 group-hover:text-white transition-colors" />
                 <span className="text-xs text-white/50 group-hover:text-white/70 transition-colors">
                   {service.name}
                 </span>
               </button>
             ))}
           </div>
+          <p className="text-xs text-white/30 mt-4">
+            Prompt copied to clipboard when you click
+          </p>
         </div>
       </div>
     </section>
