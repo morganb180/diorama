@@ -377,7 +377,7 @@ function App() {
         <div className="max-w-6xl mx-auto px-6 flex items-center justify-between text-white/30 text-xs">
           <span>© {new Date().getFullYear()} Opendoor</span>
           <div className="flex items-center gap-4">
-            <a href="https://www.opendoor.com/w/privacy-policy" className="hover:text-white/60 transition-colors">
+            <a href="https://www.opendoor.com/privacy" className="hover:text-white/60 transition-colors">
               Privacy
             </a>
             <a href="https://www.opendoor.com/w/terms" className="hover:text-white/60 transition-colors">
