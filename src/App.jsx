@@ -211,6 +211,9 @@ function App() {
     setError(null);
     setResult(null);
 
+    // Scroll to top so user can see the loading state
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+
     try {
       const generatedResult = await generateDiorama(address, selectedStyle, setProgress);
       setResult(generatedResult);
@@ -247,7 +250,7 @@ function App() {
         </div>
       </header>
 
-      <main className="relative z-10 flex flex-col items-center justify-center px-6 py-12 min-h-[calc(100vh-140px)]">
+      <main className="relative z-10 flex flex-col items-center justify-start px-6 py-12 min-h-[calc(100vh-140px)]">
         <div className="w-full max-w-xl">
           <AnimatePresence mode="wait">
             {result ? (
