@@ -241,7 +241,7 @@ function App() {
                             await navigator.share({
                               files: [file],
                               title: 'My Tiny Home',
-                              text: 'Check out my home as a tiny diorama! 🏠✨'
+                              text: 'Check out my tiny home by Opendoor 🏠✨'
                             });
                             return;
                           }
