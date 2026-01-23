@@ -180,7 +180,7 @@ function App() {
                         // On mobile, use Web Share API so users can save to Photos
                         const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
                         if (isMobile && navigator.share && navigator.canShare) {
-                          const file = new File([blob], 'my-diorama.png', { type: 'image/png' });
+                          const file = new File([blob], 'my-opendoor-tiny-home.png', { type: 'image/png' });
                           if (navigator.canShare({ files: [file] })) {
                             await navigator.share({
                               files: [file],
@@ -194,7 +194,7 @@ function App() {
                         const url = URL.createObjectURL(blob);
                         const a = document.createElement('a');
                         a.href = url;
-                        a.download = 'my-diorama.png';
+                        a.download = 'my-opendoor-tiny-home.png';
                         document.body.appendChild(a);
                         a.click();
                         document.body.removeChild(a);
@@ -234,7 +234,7 @@ function App() {
 
                         // Fallback to Web Share API (works on mobile)
                         if (navigator.share && navigator.canShare) {
-                          const file = new File([blob], 'my-diorama.png', { type: 'image/png' });
+                          const file = new File([blob], 'my-opendoor-tiny-home.png', { type: 'image/png' });
                           if (navigator.canShare({ files: [file] })) {
                             await navigator.share({
                               files: [file],
