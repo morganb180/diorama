@@ -327,7 +327,7 @@ function App() {
                     <span className="text-gradient">Infinite imagination.</span>
                   </h1>
                   <p className="text-white/50 text-lg">
-                    Transform your home into art with AI
+                    Reimagine your home with AI
                   </p>
                 </div>
 
