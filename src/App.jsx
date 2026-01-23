@@ -27,6 +27,7 @@ const STYLES = [
   { id: 'eightbit', name: '8-Bit NES', sample: '/style-samples/eightbit.png' },
   { id: 'coloringsheet', name: 'Coloring Sheet', sample: '/style-samples/coloringsheet.png' },
   { id: 'crayon', name: 'Crayon', sample: '/style-samples/crayon.png' },
+  { id: 'openarmy', name: 'Open Army', sample: '/style-samples/openarmy.png' },
 ];
 
 // Dot matrix background component
