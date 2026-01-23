@@ -176,6 +176,21 @@ function App() {
                     onClick={async () => {
                       try {
                         const blob = await getWatermarkedBlob(result.imageUrl);
+
+                        // On mobile, use Web Share API so users can save to Photos
+                        const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+                        if (isMobile && navigator.share && navigator.canShare) {
+                          const file = new File([blob], 'my-diorama.png', { type: 'image/png' });
+                          if (navigator.canShare({ files: [file] })) {
+                            await navigator.share({
+                              files: [file],
+                              title: 'My Tiny Home'
+                            });
+                            return;
+                          }
+                        }
+
+                        // Desktop: standard download
                         const url = URL.createObjectURL(blob);
                         const a = document.createElement('a');
                         a.href = url;
@@ -185,7 +200,9 @@ function App() {
                         document.body.removeChild(a);
                         URL.revokeObjectURL(url);
                       } catch (err) {
-                        console.error('Failed to download:', err);
+                        if (err.name !== 'AbortError') {
+                          console.error('Failed to download:', err);
+                        }
                       }
                     }}
                     className="flex-1 py-3 bg-white hover:bg-white/90 rounded-xl text-void font-semibold flex items-center justify-center gap-2 transition-all"
@@ -195,19 +212,46 @@ function App() {
                       <polyline points="7,10 12,15 17,10" />
                       <line x1="12" y1="15" x2="12" y2="3" />
                     </svg>
-                    Download
+                    Save
                   </button>
                   <button
                     onClick={async () => {
                       try {
                         const blob = await getWatermarkedBlob(result.imageUrl);
-                        await navigator.clipboard.write([
-                          new ClipboardItem({ 'image/png': blob })
-                        ]);
-                        alert('Image copied to clipboard!');
+
+                        // Try clipboard API first (works on desktop)
+                        if (navigator.clipboard && navigator.clipboard.write && typeof ClipboardItem !== 'undefined') {
+                          try {
+                            await navigator.clipboard.write([
+                              new ClipboardItem({ 'image/png': blob })
+                            ]);
+                            alert('Image copied to clipboard!');
+                            return;
+                          } catch (clipboardErr) {
+                            // Clipboard failed, try share API
+                          }
+                        }
+
+                        // Fallback to Web Share API (works on mobile)
+                        if (navigator.share && navigator.canShare) {
+                          const file = new File([blob], 'my-diorama.png', { type: 'image/png' });
+                          if (navigator.canShare({ files: [file] })) {
+                            await navigator.share({
+                              files: [file],
+                              title: 'My Tiny Home',
+                              text: 'Check out my home as a tiny diorama! 🏠✨'
+                            });
+                            return;
+                          }
+                        }
+
+                        // Final fallback
+                        alert('Long press on the image to save it to your device.');
                       } catch (err) {
-                        console.error('Failed to copy:', err);
-                        alert('Unable to copy image. Try downloading instead.');
+                        if (err.name !== 'AbortError') {
+                          console.error('Failed to copy/share:', err);
+                          alert('Long press on the image to save it to your device.');
+                        }
                       }
                     }}
                     className="flex-1 py-3 bg-void-200 hover:bg-void-300 border border-void-400 rounded-xl text-white font-semibold flex items-center justify-center gap-2 transition-all"
@@ -227,7 +271,7 @@ function App() {
                   rel="noopener noreferrer"
                   className="block w-full py-4 bg-accent hover:bg-accent-bright hover:shadow-glow rounded-xl text-white font-semibold text-center transition-all"
                 >
-                  See how much you can get for your home →
+                  See your home value →
                 </a>
 
                 <button
