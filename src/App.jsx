@@ -219,7 +219,7 @@ function App() {
       setResult(generatedResult);
     } catch (err) {
       console.error('Generation failed:', err);
-      setError('Something went wrong. Please try again.');
+      setError(err.message || 'Something went wrong. Please try again.');
     } finally {
       setIsGenerating(false);
     }
@@ -262,6 +262,34 @@ function App() {
                 exit={{ opacity: 0, y: -20 }}
                 className="space-y-6"
               >
+                {/* No Street View Notice */}
+                {result.noStreetView && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="p-4 bg-amber-500/20 border border-amber-500/40 rounded-xl"
+                  >
+                    <div className="flex items-start gap-3">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-amber-400 flex-shrink-0 mt-0.5">
+                        <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/>
+                        <line x1="12" y1="8" x2="12" y2="8.01"/>
+                      </svg>
+                      <div>
+                        <p className="text-sm font-medium text-amber-200">
+                          Google Street View isn't available for this address
+                        </p>
+                        <p className="text-sm text-amber-200/80 mt-1">
+                          {result.fallbackHome ? (
+                            <>Here's the <strong>{result.fallbackHome.name}</strong> in {result.fallbackHome.location} instead!</>
+                          ) : (
+                            <>Try a different address, or explore our gallery of famous homes.</>
+                          )}
+                        </p>
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
+
                 {/* Result image with glow effect */}
                 <div className="relative group">
                   <div className="absolute -inset-1 bg-gradient-to-r from-accent/50 to-coral/50 rounded-2xl blur-xl opacity-50 group-hover:opacity-75 transition-opacity" />
