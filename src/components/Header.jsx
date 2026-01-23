@@ -28,7 +28,7 @@ export function Header() {
 
         {/* CTA Button */}
         <a
-          href="https://www.opendoor.com/w/request-offer"
+          href="https://www.opendoor.com/?utm_source=tiny_home_magic&utm_medium=referral&utm_content=header"
           target="_blank"
           rel="noopener noreferrer"
           className="hidden sm:inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-lg transition-colors"

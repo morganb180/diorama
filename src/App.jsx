@@ -132,7 +132,7 @@ function App() {
         <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
           <OpendoorLogo className="h-5 text-white" />
           <a
-            href="https://www.opendoor.com/w/request-offer"
+            href="https://www.opendoor.com/?utm_source=tiny_home_magic&utm_medium=referral&utm_content=header"
             target="_blank"
             rel="noopener noreferrer"
             className="text-xs text-white/40 font-mono uppercase tracking-wider hover:text-white transition-colors"
@@ -222,7 +222,7 @@ function App() {
 
                 {/* CTA */}
                 <a
-                  href="https://www.opendoor.com/w/request-offer"
+                  href="https://www.opendoor.com/?utm_source=tiny_home_magic&utm_medium=referral&utm_content=primary_cta"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="block w-full py-4 bg-accent hover:bg-accent-bright hover:shadow-glow rounded-xl text-white font-semibold text-center transition-all"
