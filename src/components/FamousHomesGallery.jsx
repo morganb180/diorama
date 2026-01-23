@@ -136,7 +136,7 @@ export function FamousHomesGallery() {
   };
 
   return (
-    <div className="mt-12 mb-8 max-w-md mx-auto px-4">
+    <div className="mt-12 mb-8 max-w-2xl mx-auto px-6">
       <div className="text-center mb-6">
         <h2 className="text-xl font-semibold text-gray-800 mb-2">
           See it in action
