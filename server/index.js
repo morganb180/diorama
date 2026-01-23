@@ -704,7 +704,7 @@ app.post('/api/vision/analyze', async (req, res) => {
   }
 
   try {
-    const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
+    const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
 
     const prompt = `Analyze this Street View image of a residential property and generate a detailed semantic description suitable for AI image generation.
 
@@ -768,7 +768,7 @@ async function generateWithGemini(prompt, res) {
   try {
     // Try using Gemini 2.0 Flash with image generation
     const model = genAI.getGenerativeModel({
-      model: 'gemini-2.0-flash-exp',
+      model: 'gemini-2.5-flash',
       generationConfig: {
         responseModalities: ['image', 'text'],
       },
@@ -784,7 +784,7 @@ async function generateWithGemini(prompt, res) {
           imageBase64: part.inlineData.data,
           mimeType: part.inlineData.mimeType || 'image/png',
           mock: false,
-          model: 'gemini-2.0-flash-exp',
+          model: 'gemini-2.5-flash',
         });
       }
     }
@@ -898,7 +898,7 @@ app.post('/api/generate', async (req, res) => {
     let semanticDescription = 'A suburban home with typical American architecture.';
 
     if (genAI && streetViewBase64 && aerialViewBase64) {
-      const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
+      const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
 
       // === STREET VIEW PROMPT - Focus on what's visible from the street ===
       const streetViewPrompt = `You are a real estate architecture expert analyzing a STREET VIEW image of a residential property. Describe ONLY what you can see from this front-facing perspective.
@@ -1043,7 +1043,7 @@ The output must be detailed enough for an AI to recreate THIS EXACT property wit
 
     } else if (genAI && streetViewBase64) {
       // Fallback to street view only if aerial not available
-      const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
+      const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
 
       const visionPrompt = `You are a real estate architecture expert. Analyze this Street View image with EXTREME PRECISION for an AI image generator. Describe from the perspective of someone FACING THE HOUSE from the street.
 
@@ -1114,7 +1114,7 @@ Output ONE detailed paragraph (3-4 sentences). USE SPATIAL LANGUAGE: left/right 
       if (!generatedImage) {
         try {
           const geminiModel = genAI.getGenerativeModel({
-            model: 'gemini-2.0-flash-exp',
+            model: 'gemini-2.5-flash',
             generationConfig: { responseModalities: ['image', 'text'] },
           });
 
@@ -1398,7 +1398,7 @@ Generate now.`;
         // Fallback to older model if 2.5 not available
         try {
           const fallbackModel = genAI.getGenerativeModel({
-            model: 'gemini-2.0-flash-exp',
+            model: 'gemini-2.5-flash',
             generationConfig: { responseModalities: ['image', 'text'] },
           });
 
