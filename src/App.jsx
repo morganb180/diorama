@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { AddressAutocomplete } from './components/AddressAutocomplete';
 import { EmailCapture } from './components/EmailCapture';
+import { FamousHomesGallery } from './components/FamousHomesGallery';
 import { generateDiorama } from './utils/api';
 import { getWatermarkedBlob } from './utils/watermark';
 
@@ -415,6 +416,9 @@ function App() {
           </AnimatePresence>
         </div>
       </main>
+
+      {/* Famous Homes Gallery */}
+      <FamousHomesGallery />
 
       {/* Footer */}
       <footer className="relative z-10 border-t border-void-300 py-6">
