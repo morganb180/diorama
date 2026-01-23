@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Download, Share2, RefreshCw, Copy, Check, ChevronDown, ChevronUp } from 'lucide-react';
+import { Download, Share2, RefreshCw, Copy, Check, ChevronDown, ChevronUp, MapPinOff } from 'lucide-react';
 import { downloadImage, shareImage } from '../utils/api';
 import { STYLES } from '../utils/config';
 
@@ -45,6 +45,31 @@ export function ResultDisplay({ result, selectedStyle, onReset }) {
       transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
       className="w-full max-w-lg mx-auto"
     >
+      {/* No Street View Notice */}
+      {result.noStreetView && (
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mb-4 p-4 bg-amber-50 border border-amber-200 rounded-xl"
+        >
+          <div className="flex items-start gap-3">
+            <MapPinOff size={20} className="text-amber-600 flex-shrink-0 mt-0.5" />
+            <div>
+              <p className="text-sm font-medium text-amber-800">
+                Google Street View isn't available for this address
+              </p>
+              <p className="text-sm text-amber-700 mt-1">
+                {result.fallbackHome ? (
+                  <>Here's the <strong>{result.fallbackHome.name}</strong> in {result.fallbackHome.location} instead!</>
+                ) : (
+                  <>Try a different address, or explore our gallery of famous homes.</>
+                )}
+              </p>
+            </div>
+          </div>
+        </motion.div>
+      )}
+
       {/* Image Display */}
       <div className="result-pedestal group">
         <motion.div
@@ -72,7 +97,9 @@ export function ResultDisplay({ result, selectedStyle, onReset }) {
           >
             <span className="text-lg">{style?.icon}</span>
             <span className="text-xs font-display font-semibold text-slate-700">
-              {style?.shortName}
+              {result.noStreetView && result.fallbackHome
+                ? result.fallbackHome.name
+                : style?.shortName}
             </span>
           </motion.div>
 

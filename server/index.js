@@ -30,6 +30,45 @@ const COST_ESTIMATES = {
 };
 const ESTIMATED_COST_PER_GENERATION = Object.values(COST_ESTIMATES).reduce((a, b) => a + b, 0);
 
+// ============================================
+// FAMOUS HOMES FALLBACK (for no Street View coverage)
+// ============================================
+
+const FAMOUS_HOMES_FALLBACK = [
+  { id: 'home-alone', name: 'Home Alone House', location: 'Winnetka, IL' },
+  { id: 'fresh-prince', name: 'Fresh Prince Mansion', location: 'Los Angeles, CA' },
+  { id: 'breaking-bad', name: 'Breaking Bad House', location: 'Albuquerque, NM' },
+  { id: 'christmas-story', name: 'A Christmas Story House', location: 'Cleveland, OH' },
+  { id: 'ferris-bueller', name: 'Ferris Bueller Glass House', location: 'Highland Park, IL' },
+  { id: 'eames-house', name: 'Eames House', location: 'Pacific Palisades, CA' },
+  { id: 'stahl-house', name: 'Stahl House', location: 'Los Angeles, CA' },
+];
+
+function getRandomFamousHomeFallback(styleId) {
+  const home = FAMOUS_HOMES_FALLBACK[Math.floor(Math.random() * FAMOUS_HOMES_FALLBACK.length)];
+  const filename = `${home.id}-${styleId}.png`;
+  const filepath = path.join(process.cwd(), 'launch-assets-watermarked', filename);
+
+  // Check if this style exists for this home, fallback to diorama if not
+  if (!fs.existsSync(filepath)) {
+    const dioramaPath = path.join(process.cwd(), 'launch-assets-watermarked', `${home.id}-diorama.png`);
+    if (fs.existsSync(dioramaPath)) {
+      return {
+        home,
+        imagePath: dioramaPath,
+        style: 'diorama',
+      };
+    }
+    return null;
+  }
+
+  return {
+    home,
+    imagePath: filepath,
+    style: styleId,
+  };
+}
+
 function logGeneration({ address, styleId, success, durationMs, error = null, cached = {} }) {
   const logEntry = {
     timestamp: new Date().toISOString(),
@@ -1150,6 +1189,39 @@ app.post('/api/generate-v2', generationLimiter, async (req, res) => {
   const cacheKey = sanitizedAddress.toLowerCase().trim();
 
   try {
+    // Step 0: Check Street View availability FIRST
+    if (GOOGLE_MAPS_API_KEY) {
+      const metadataUrl = `https://maps.googleapis.com/maps/api/streetview/metadata?location=${encodeURIComponent(sanitizedAddress || address)}&key=${GOOGLE_MAPS_API_KEY}`;
+      const metadataRes = await fetch(metadataUrl);
+      const metadata = await metadataRes.json();
+
+      if (metadata.status !== 'OK') {
+        // No Street View coverage - return fallback famous home
+        console.log(`No Street View for "${sanitizedAddress}" - status: ${metadata.status}`);
+
+        const fallback = getRandomFamousHomeFallback(styleId);
+        if (fallback) {
+          const imageBase64 = fs.readFileSync(fallback.imagePath).toString('base64');
+          return res.status(200).json({
+            success: true,
+            noStreetView: true,
+            message: `Google Street View is not available for this address. Here's the ${fallback.home.name} in ${fallback.home.location} instead!`,
+            fallbackHome: fallback.home,
+            generatedImage: {
+              base64: imageBase64,
+              mimeType: 'image/png',
+            },
+            model: 'fallback',
+          });
+        } else {
+          return res.status(400).json({
+            error: 'Google Street View is not available for this address.',
+            noStreetView: true,
+          });
+        }
+      }
+    }
+
     // Step 1: Fetch Street View and Aerial View images (with caching)
     let streetViewBase64 = streetViewCache.get(cacheKey);
     let aerialViewBase64 = aerialViewCache.get(cacheKey);

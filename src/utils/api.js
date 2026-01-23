@@ -197,7 +197,8 @@ async function generateDioramaViaApi(address, styleId, onProgress) {
     });
 
     if (!response.ok) {
-      throw new Error(`API error: ${response.statusText}`);
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.error || `API error: ${response.statusText}`);
     }
 
     // Step 3: Generating
@@ -220,6 +221,10 @@ async function generateDioramaViaApi(address, styleId, onProgress) {
       streetViewUrl: result.streetViewUrl,
       mock: result.mock,
       model: result.model,
+      // Pass through no Street View fallback info
+      noStreetView: result.noStreetView || false,
+      fallbackMessage: result.message,
+      fallbackHome: result.fallbackHome,
     };
   } catch (error) {
     console.error('API generation failed:', error);
