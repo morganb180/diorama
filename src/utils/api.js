@@ -276,7 +276,7 @@ export async function downloadImage(imageUrl, filename = 'diorama.png') {
 export async function shareImage(imageUrl, title = 'My Home Diorama') {
   const shareData = {
     title,
-    text: 'Check out this diorama version of my house! Generated with Opendoor Diorama Generator.',
+    text: 'Check out my tiny home by Opendoor! Try it for yourself at https://fun.opendoor.com/',
     url: window.location.href,
   };
 

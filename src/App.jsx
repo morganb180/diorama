@@ -344,7 +344,7 @@ function App() {
                             await navigator.share({
                               files: [file],
                               title: 'My Tiny Home',
-                              text: 'Check out my tiny home by Opendoor 🏠✨'
+                              text: 'Check out my tiny home by Opendoor 🏠✨ Try it for yourself at https://fun.opendoor.com/'
                             });
                             return;
                           }
