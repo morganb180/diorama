@@ -563,6 +563,17 @@ app.get('/api/health', (req, res) => {
 });
 
 /**
+ * Clear all caches (for debugging/fixes)
+ */
+app.post('/api/clear-cache', (req, res) => {
+  streetViewCache.cache.clear();
+  aerialViewCache.cache.clear();
+  identityCache.cache.clear();
+  console.log('All caches cleared');
+  res.json({ success: true, message: 'All caches cleared' });
+});
+
+/**
  * Get generation statistics
  * Returns counts, costs, and breakdown by style
  */
@@ -1417,7 +1428,8 @@ YOUR TASK:
 - The result must be UNMISTAKABLY this specific house
 - All signature features from the identity card must be visible
 - The owner should immediately recognize their home
-- IMPORTANT: Do NOT add a swimming pool unless one is explicitly visible in the reference photos or mentioned in the identity card
+
+POOL RULE: Only include a pool if the identity card EXPLICITLY describes a pool with specific shape and position ON THIS PROPERTY. If the identity says "No pool" or doesn't mention one, do NOT add a pool. When in doubt, leave it out.
 
 Generate now.`
         : `${stylePrompt}
@@ -1428,7 +1440,7 @@ ${identity}
 
 Create this house based on the identity description above. Every architectural feature must match. The owner must immediately recognize their home.
 
-IMPORTANT: Do NOT add a swimming pool unless one is explicitly mentioned in the identity card above.
+POOL RULE: Only include a pool if the identity EXPLICITLY describes a pool with specific shape and position ON THIS PROPERTY. If the identity says "No pool" or doesn't mention one, do NOT add a pool. When in doubt, leave it out.
 
 Generate now.`;
 
