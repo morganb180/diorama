@@ -999,10 +999,10 @@ DRIVEWAY LAYOUT:
 - Position relative to house (along left side, along right side, center approach)
 
 BACKYARD FEATURES:
-- Pool: EXACT shape (rectangular, kidney, freeform, L-shaped) and EXACT position (back-center, back-left corner, back-right corner, along left side)
-- Pool deck/patio material and extent
+- IF AND ONLY IF a pool is clearly visible: describe its shape (rectangular, kidney, freeform) and position. If NO pool is visible, write "No pool visible."
 - Covered patio or pergola structures (position and size)
 - Outdoor kitchen, fire pit, or built-in features
+- Patio/deck areas and hardscape
 
 BACKYARD LANDSCAPING:
 - Lawn areas vs. hardscape ratio
@@ -1050,9 +1050,10 @@ TASK: Merge these into ONE cohesive, detailed paragraph (6-8 sentences) that inc
 - Start with architectural style and facade details from street view
 - Include exact colors, materials, window styles, garage position
 - Incorporate lot shape, driveway path, and landscaping positions
-- ONLY include a pool if it was explicitly mentioned in the aerial analysis - do NOT add a pool if none was observed
 - Include tree positions from BOTH views
 - Use consistent spatial language (left/right when facing house from street, front/back)
+
+CRITICAL POOL RULE: If the aerial analysis says "No pool visible" or does not mention a pool, do NOT include any pool in the output. Only mention a pool if the aerial analysis explicitly describes one with shape and position. Most homes do NOT have pools.
 
 The output must be detailed enough for an AI to recreate THIS EXACT property with precise element placement. Do not omit any specific details from either analysis.`;
 
@@ -1083,9 +1084,9 @@ Describe EXACTLY with SPATIAL POSITIONS:
 - Driveway position (e.g., "driveway on the left leading to garage")
 - Pillars, columns, porches with positions
 - Trees with positions (e.g., "large palm tree front right", "row of hedges along left")
-- Any visible pool or backyard features with position (e.g., "pool visible in back left")
+- ONLY if clearly visible: pool or backyard features. Do NOT assume a pool exists - most homes don't have one.
 
-Output ONE detailed paragraph (3-4 sentences). USE SPATIAL LANGUAGE: left/right (when facing house from street), front/back. ACCURACY AND POSITIONING ARE CRITICAL - the AI must recreate THIS EXACT house with correct element placement.`;
+Output ONE detailed paragraph (3-4 sentences). USE SPATIAL LANGUAGE: left/right (when facing house from street), front/back. ACCURACY AND POSITIONING ARE CRITICAL - the AI must recreate THIS EXACT house with correct element placement. Do NOT mention a pool unless you can clearly see one.`;
 
       const imagePart = {
         inlineData: {
