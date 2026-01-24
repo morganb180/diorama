@@ -401,7 +401,7 @@ This should look like it could hang in a museum next to "The Great Wave."`,
   travelposter: {
     name: 'Vintage Travel Poster',
     useReference: false,
-    prompt: 'Vintage 1950s travel poster illustration. Bold flat colors, simplified geometric shapes, art deco influences, optimistic mid-century modern aesthetic, screen-printed texture, "Visit California" tourism poster style. Warm sunset palette with teal accents.',
+    prompt: 'Vintage 1950s travel poster illustration. Bold flat colors, simplified geometric shapes, art deco influences, optimistic mid-century modern aesthetic, screen-printed texture, "Visit [LOCATION]" tourism poster style. Warm sunset palette with teal accents.',
   },
   richardscarry: {
     name: 'Richard Scarry',
@@ -861,7 +861,34 @@ app.post('/api/generate', async (req, res) => {
 
   // Get the style prompt from server-side allowlist (cannot be overridden)
   const styleConfig = ALLOWED_STYLES[styleId];
-  const stylePrompt = styleConfig.prompt;
+  let stylePrompt = styleConfig.prompt;
+
+  // Extract location from address for location-aware styles (e.g., travel poster)
+  const addressParts = sanitizedAddress.split(',').map(p => p.trim());
+  let location = 'this destination';
+  if (addressParts.length >= 2) {
+    const stateZipPart = addressParts[addressParts.length - 2];
+    const stateMatch = stateZipPart.match(/^([A-Z]{2})\s*\d{5}/);
+    if (stateMatch) {
+      const stateNames = {
+        AL: 'Alabama', AK: 'Alaska', AZ: 'Arizona', AR: 'Arkansas', CA: 'California',
+        CO: 'Colorado', CT: 'Connecticut', DE: 'Delaware', FL: 'Florida', GA: 'Georgia',
+        HI: 'Hawaii', ID: 'Idaho', IL: 'Illinois', IN: 'Indiana', IA: 'Iowa',
+        KS: 'Kansas', KY: 'Kentucky', LA: 'Louisiana', ME: 'Maine', MD: 'Maryland',
+        MA: 'Massachusetts', MI: 'Michigan', MN: 'Minnesota', MS: 'Mississippi', MO: 'Missouri',
+        MT: 'Montana', NE: 'Nebraska', NV: 'Nevada', NH: 'New Hampshire', NJ: 'New Jersey',
+        NM: 'New Mexico', NY: 'New York', NC: 'North Carolina', ND: 'North Dakota', OH: 'Ohio',
+        OK: 'Oklahoma', OR: 'Oregon', PA: 'Pennsylvania', RI: 'Rhode Island', SC: 'South Carolina',
+        SD: 'South Dakota', TN: 'Tennessee', TX: 'Texas', UT: 'Utah', VT: 'Vermont',
+        VA: 'Virginia', WA: 'Washington', WV: 'West Virginia', WI: 'Wisconsin', WY: 'Wyoming',
+        DC: 'Washington DC'
+      };
+      location = stateNames[stateMatch[1]] || stateMatch[1];
+    } else {
+      location = addressParts[addressParts.length - 3] || addressParts[0];
+    }
+  }
+  stylePrompt = stylePrompt.replace('[LOCATION]', location);
 
   try {
     // Step 1: Fetch Street View and Aerial View images in parallel
@@ -1183,8 +1210,39 @@ app.post('/api/generate-v2', generationLimiter, async (req, res) => {
 
   // Get style config from server-side allowlist (cannot be overridden)
   const styleConfig = ALLOWED_STYLES[styleId];
-  const stylePrompt = styleConfig.prompt;
+  let stylePrompt = styleConfig.prompt;
   const useReference = styleConfig.useReference;
+
+  // Extract location (state/country) from address for location-aware styles like travel poster
+  // Address format is typically: "123 Main St, City, ST 12345, USA"
+  const addressParts = sanitizedAddress.split(',').map(p => p.trim());
+  let location = 'this destination';
+  if (addressParts.length >= 2) {
+    // Try to get state from "ST 12345" part (second to last, before country)
+    const stateZipPart = addressParts[addressParts.length - 2];
+    const stateMatch = stateZipPart.match(/^([A-Z]{2})\s*\d{5}/);
+    if (stateMatch) {
+      // Map state abbreviations to full names for nicer poster text
+      const stateNames = {
+        AL: 'Alabama', AK: 'Alaska', AZ: 'Arizona', AR: 'Arkansas', CA: 'California',
+        CO: 'Colorado', CT: 'Connecticut', DE: 'Delaware', FL: 'Florida', GA: 'Georgia',
+        HI: 'Hawaii', ID: 'Idaho', IL: 'Illinois', IN: 'Indiana', IA: 'Iowa',
+        KS: 'Kansas', KY: 'Kentucky', LA: 'Louisiana', ME: 'Maine', MD: 'Maryland',
+        MA: 'Massachusetts', MI: 'Michigan', MN: 'Minnesota', MS: 'Mississippi', MO: 'Missouri',
+        MT: 'Montana', NE: 'Nebraska', NV: 'Nevada', NH: 'New Hampshire', NJ: 'New Jersey',
+        NM: 'New Mexico', NY: 'New York', NC: 'North Carolina', ND: 'North Dakota', OH: 'Ohio',
+        OK: 'Oklahoma', OR: 'Oregon', PA: 'Pennsylvania', RI: 'Rhode Island', SC: 'South Carolina',
+        SD: 'South Dakota', TN: 'Tennessee', TX: 'Texas', UT: 'Utah', VT: 'Vermont',
+        VA: 'Virginia', WA: 'Washington', WV: 'West Virginia', WI: 'Wisconsin', WY: 'Wyoming',
+        DC: 'Washington DC'
+      };
+      location = stateNames[stateMatch[1]] || stateMatch[1];
+    } else {
+      // Fallback: use city name
+      location = addressParts[addressParts.length - 3] || addressParts[0];
+    }
+  }
+  stylePrompt = stylePrompt.replace('[LOCATION]', location);
 
   // Normalize address for cache key
   const cacheKey = sanitizedAddress.toLowerCase().trim();
