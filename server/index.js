@@ -1414,6 +1414,7 @@ YOUR TASK:
 - The result must be UNMISTAKABLY this specific house
 - All signature features from the identity card must be visible
 - The owner should immediately recognize their home
+- IMPORTANT: Do NOT add a swimming pool unless one is explicitly visible in the reference photos or mentioned in the identity card
 
 Generate now.`
         : `${stylePrompt}
@@ -1423,6 +1424,8 @@ ${identity}
 === END IDENTITY ===
 
 Create this house based on the identity description above. Every architectural feature must match. The owner must immediately recognize their home.
+
+IMPORTANT: Do NOT add a swimming pool unless one is explicitly mentioned in the identity card above.
 
 Generate now.`;
 

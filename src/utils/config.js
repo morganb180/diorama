@@ -420,7 +420,7 @@ Output Format:
 Return a single paragraph (2-4 sentences) describing the property as if you were writing for an architectural rendering prompt. Be specific about materials, colors, and distinctive features.
 
 Example Output:
-"A grand two-story Mediterranean-style suburban home with a warm-toned stucco exterior and a distinct red clay terracotta tile roof. Features a large, manicured front lawn with a stone-paved curved walkway. In the rear, a sparkling turquoise swimming pool is surrounded by a stone patio and lush green privacy hedges. Large windows with dark frames and a multi-car garage."
+"A grand two-story Mediterranean-style suburban home with a warm-toned stucco exterior and a distinct red clay terracotta tile roof. Features a large, manicured front lawn with a stone-paved curved walkway leading to the entrance. The backyard has a stone patio surrounded by lush green privacy hedges. Large windows with dark frames and a three-car garage with arched doors."
 `;
 
 /**
@@ -428,7 +428,7 @@ Example Output:
  */
 export const MOCK_DATA = {
   sampleAddress: '26141 Red Corral Rd, Laguna Hills, CA 92653',
-  sampleSemanticDescription: 'A grand two-story Mediterranean-style suburban home with a warm-toned stucco exterior and a distinct red clay terracotta tile roof. Features a large, manicured front lawn with a stone-paved curved walkway. In the rear, a sparkling turquoise swimming pool is surrounded by a stone patio and lush green privacy hedges. Large windows with dark frames and a multi-car garage.',
+  sampleSemanticDescription: 'A grand two-story Mediterranean-style suburban home with a warm-toned stucco exterior and a distinct red clay terracotta tile roof. Features a large, manicured front lawn with a stone-paved curved walkway leading to the entrance. The backyard has a stone patio surrounded by lush green privacy hedges. Large windows with dark frames and a three-car garage with arched doors.',
   mockImages: {
     diorama: 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=800&q=80',
     simcity: 'https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=800&q=80',

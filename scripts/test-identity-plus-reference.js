@@ -173,7 +173,7 @@ async function main() {
       name: 'Diorama + Ref',
       file: 'diorama-with-ref.png',
       useReference: true,
-      prompt: '45-degree isometric miniature architectural diorama model. Studio photography, warm lighting, clean background. Show the house from an isometric angle revealing front, side, and roof. Include the pool in the back. Make it look like a high-end architectural scale model.',
+      prompt: '45-degree isometric miniature architectural diorama model. Studio photography, warm lighting, clean background. Show the house from an isometric angle revealing front, side, and roof. Make it look like a high-end architectural scale model.',
     },
     {
       name: 'Ghibli + Ref',
