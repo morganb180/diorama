@@ -42,7 +42,7 @@ export const STYLES = {
     bgColor: 'rgba(212, 165, 116, 0.1)',
     icon: '🏠',
     useReference: true,
-    promptV2: '45-degree isometric miniature architectural diorama model. Studio photography, warm lighting, clean background. Show the house from an isometric angle revealing front, side, and roof. Include the pool in the back. Make it look like a high-end architectural scale model.',
+    promptV2: '45-degree isometric miniature architectural diorama model. Studio photography, warm lighting, clean background. Show the house from an isometric angle revealing front, side, and roof. Make it look like a high-end architectural scale model.',
   },
   simcity: {
     id: 'simcity',
@@ -239,7 +239,7 @@ This should look like it could hang in a museum next to "The Great Wave."`,
     bgColor: 'rgba(232, 93, 4, 0.1)',
     icon: '✈️',
     useReference: false, // Needs creative freedom for stylization
-    promptV2: 'Vintage 1950s travel poster illustration. Bold flat colors, simplified geometric shapes, art deco influences, optimistic mid-century modern aesthetic, screen-printed texture, "Visit California" tourism poster style. Warm sunset palette with teal accents.',
+    promptV2: 'Vintage 1950s travel poster illustration. Bold flat colors, simplified geometric shapes, art deco influences, optimistic mid-century modern aesthetic, screen-printed texture, "Visit [LOCATION]" tourism poster style. Warm sunset palette with teal accents.',
   },
   richardscarry: {
     id: 'richardscarry',

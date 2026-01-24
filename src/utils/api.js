@@ -210,9 +210,9 @@ async function generateDioramaViaApi(address, styleId, onProgress) {
     let imageUrl;
     if (result.generatedImage?.base64) {
       imageUrl = `data:${result.generatedImage.mimeType};base64,${result.generatedImage.base64}`;
-    } else if (result.mock) {
-      // Use mock image for the selected style
-      imageUrl = MOCK_DATA.mockImages[styleId] || MOCK_DATA.mockImages.diorama;
+    } else if (result.mock && !result.noStreetView) {
+      // Generation failed - throw error instead of showing stock photos
+      throw new Error(result.error || 'Image generation failed. Please try again.');
     }
 
     return {
