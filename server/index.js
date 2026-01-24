@@ -979,6 +979,8 @@ OUTPUT: Write 4-5 detailed sentences describing the front facade, starting with 
       // === AERIAL VIEW PROMPT - Focus on what's visible from above ===
       const aerialViewPrompt = `You are a real estate architecture expert analyzing an AERIAL/SATELLITE image of a residential property. Describe ONLY what you can see from this bird's-eye perspective.
 
+CRITICAL: Focus ONLY on the TARGET PROPERTY (the one with the house centered in the image). IGNORE all neighboring properties and their features. If you see a pool on an adjacent lot, do NOT mention it - it belongs to the neighbors, not this property.
+
 Use spatial directions as if FACING THE HOUSE FROM THE STREET (top of image = backyard, bottom = street, left/right = viewer's left/right when facing house).
 
 ROOF (from above):
@@ -998,8 +1000,8 @@ DRIVEWAY LAYOUT:
 - Parking areas or widened sections
 - Position relative to house (along left side, along right side, center approach)
 
-BACKYARD FEATURES:
-- IF AND ONLY IF a pool is clearly visible: describe its shape (rectangular, kidney, freeform) and position. If NO pool is visible, write "No pool visible."
+BACKYARD FEATURES (THIS PROPERTY ONLY - ignore neighboring properties):
+- Pool: ONLY mention if clearly within THIS property's lot boundaries. Pools on neighboring properties should be IGNORED. If no pool on THIS property, write "No pool on this property."
 - Covered patio or pergola structures (position and size)
 - Outdoor kitchen, fire pit, or built-in features
 - Patio/deck areas and hardscape
@@ -1053,7 +1055,7 @@ TASK: Merge these into ONE cohesive, detailed paragraph (6-8 sentences) that inc
 - Include tree positions from BOTH views
 - Use consistent spatial language (left/right when facing house from street, front/back)
 
-CRITICAL POOL RULE: If the aerial analysis says "No pool visible" or does not mention a pool, do NOT include any pool in the output. Only mention a pool if the aerial analysis explicitly describes one with shape and position. Most homes do NOT have pools.
+CRITICAL POOL RULE: Do NOT include a pool unless the aerial analysis explicitly confirms one exists ON THIS PROPERTY (not on neighboring lots). If the aerial says "No pool on this property" or doesn't mention a pool, the output must NOT include any pool. Neighboring pools visible in satellite images should be ignored. Most homes do NOT have pools.
 
 The output must be detailed enough for an AI to recreate THIS EXACT property with precise element placement. Do not omit any specific details from either analysis.`;
 
