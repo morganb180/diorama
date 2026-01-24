@@ -271,7 +271,7 @@ const ALLOWED_STYLES = {
   diorama: {
     name: 'Miniature Diorama',
     useReference: true,
-    prompt: '45-degree isometric miniature architectural diorama model. Studio photography, warm lighting, clean background. Show the house from an isometric angle revealing front, side, and roof. Include the pool in the back. Make it look like a high-end architectural scale model.',
+    prompt: '45-degree isometric miniature architectural diorama model. Studio photography, warm lighting, clean background. Show the house from an isometric angle revealing front, side, and roof. Make it look like a high-end architectural scale model.',
   },
   simcity: {
     name: 'Retro SimCity',
@@ -992,7 +992,7 @@ NEIGHBORING CONTEXT:
 - Relationship to neighboring properties
 - Street orientation
 
-OUTPUT: Write 4-5 detailed sentences describing the property from above, focusing on lot layout, backyard features, pool position, and landscaping with precise spatial positions.`;
+OUTPUT: Write 4-5 detailed sentences describing the property from above, focusing on lot layout, backyard features, and landscaping with precise spatial positions. IMPORTANT: Only mention a pool if you can clearly see one in the aerial image - do NOT assume or hallucinate a pool.`;
 
       // Run BOTH analyses in PARALLEL for speed
       const streetViewPart = {
@@ -1023,7 +1023,7 @@ TASK: Merge these into ONE cohesive, detailed paragraph (6-8 sentences) that inc
 - Start with architectural style and facade details from street view
 - Include exact colors, materials, window styles, garage position
 - Incorporate lot shape, driveway path, and landscaping positions
-- Include pool shape AND exact position from aerial view
+- ONLY include a pool if it was explicitly mentioned in the aerial analysis - do NOT add a pool if none was observed
 - Include tree positions from BOTH views
 - Use consistent spatial language (left/right when facing house from street, front/back)
 
