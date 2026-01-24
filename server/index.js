@@ -1012,10 +1012,10 @@ DRIVEWAY LAYOUT:
 - Position relative to house (along left side, along right side, center approach)
 
 BACKYARD FEATURES:
+- Pool: ONLY if clearly centered within THIS property's backyard (not near lot edges). Pools at the edge of the image or clearly on neighboring lots should be IGNORED. Describe shape and position if present.
 - Covered patio or pergola structures (position and size)
 - Outdoor kitchen, fire pit, or built-in features
 - Patio/deck areas and hardscape
-- DO NOT mention swimming pools - skip pool detection entirely
 
 BACKYARD LANDSCAPING:
 - Lawn areas vs. hardscape ratio
@@ -1032,7 +1032,7 @@ NEIGHBORING CONTEXT:
 - Relationship to neighboring properties
 - Street orientation
 
-OUTPUT: Write 4-5 detailed sentences describing the property from above, focusing on lot layout, backyard features (patios, structures, landscaping), and tree positions. DO NOT mention swimming pools at all - we handle pool detection separately.`;
+OUTPUT: Write 4-5 detailed sentences describing the property from above, focusing on lot layout, backyard features, and landscaping. Only mention a pool if it's clearly centered in THIS property's backyard - ignore pools near lot boundaries or on neighboring properties.`;
 
       // Run BOTH analyses in PARALLEL for speed
       const streetViewPart = {
@@ -1066,7 +1066,7 @@ TASK: Merge these into ONE cohesive, detailed paragraph (6-8 sentences) that inc
 - Include tree positions from BOTH views
 - Use consistent spatial language (left/right when facing house from street, front/back)
 
-IMPORTANT: Do NOT mention or include any swimming pools in the output. Pool detection is disabled.
+POOL RULE: Only include a pool if the aerial analysis explicitly describes one centered in the backyard. Pools near property edges are likely neighbors' - exclude those.
 
 The output must be detailed enough for an AI to recreate THIS EXACT property with precise element placement. Do not omit any specific details from either analysis.`;
 
@@ -1429,7 +1429,7 @@ YOUR TASK:
 - All signature features from the identity card must be visible
 - The owner should immediately recognize their home
 
-IMPORTANT: Do NOT add any swimming pool to this image. Generate the property without a pool.
+POOL: Only include a pool if the identity explicitly describes one. If no pool mentioned, do not add one.
 
 Generate now.`
         : `${stylePrompt}
@@ -1440,7 +1440,7 @@ ${identity}
 
 Create this house based on the identity description above. Every architectural feature must match. The owner must immediately recognize their home.
 
-IMPORTANT: Do NOT add any swimming pool to this image. Generate the property without a pool.
+POOL: Only include a pool if the identity explicitly describes one. If no pool mentioned, do not add one.
 
 Generate now.`;
 
