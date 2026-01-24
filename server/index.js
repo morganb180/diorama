@@ -400,8 +400,8 @@ This should look like it could hang in a museum next to "The Great Wave."`,
   },
   travelposter: {
     name: 'Vintage Travel Poster',
-    useReference: false,
-    prompt: 'Vintage 1950s travel poster illustration. Bold flat colors, simplified geometric shapes, art deco influences, optimistic mid-century modern aesthetic, screen-printed texture, "Visit [LOCATION]" tourism poster style. Warm sunset palette with teal accents.',
+    useReference: true,
+    prompt: 'Vintage 1950s travel poster illustration featuring THIS HOUSE as the main focal point. The house should be prominently displayed in the center/foreground, rendered in bold flat colors and simplified geometric shapes. Art deco influences, optimistic mid-century modern aesthetic, screen-printed texture. Include "Visit [LOCATION]" text at top. Warm sunset palette with teal accents. The house is the star of this tourism poster.',
   },
   richardscarry: {
     name: 'Richard Scarry',
