@@ -932,6 +932,70 @@ app.post('/api/generate', async (req, res) => {
       }
     }
 
+    // === QUICK IMAGE QUALITY CHECK (before expensive analysis) ===
+    console.log('🔍 Starting Street View quality check...');
+    if (genAI && streetViewBase64) {
+      const quickModel = genAI.getGenerativeModel({ model: 'gemini-2.0-flash-lite' });
+
+      const qualityCheckPrompt = `Rate this Street View image for generating a house diorama. Score 0-100.
+
+SCORING CRITERIA:
+- 80-100: Clear, unobstructed view of a house facade. Walls, roof, windows, door all visible.
+- 60-79: Partial view - house visible but some parts blocked by trees or angle.
+- 40-59: Poor view - house mostly obscured by vegetation, fencing, or distance.
+- 20-39: Very poor - only glimpses of house through heavy obstruction.
+- 0-19: Unusable - no house visible, privacy blur, only walls/fences/vegetation, or wrong location.
+
+RESPOND WITH ONLY A JSON OBJECT, nothing else:
+{"score": [0-100], "reason": "[brief 5-10 word explanation]"}`;
+
+      try {
+        const qualityResult = await quickModel.generateContent([
+          qualityCheckPrompt,
+          { inlineData: { data: streetViewBase64, mimeType: 'image/jpeg' } }
+        ]);
+        const qualityText = (await qualityResult.response).text().trim();
+        console.log('📝 Quality check raw response:', qualityText.substring(0, 200));
+
+        // Parse the JSON response
+        const jsonMatch = qualityText.match(/\{[\s\S]*\}/);
+        if (jsonMatch) {
+          const qualityData = JSON.parse(jsonMatch[0]);
+          const score = parseInt(qualityData.score) || 0;
+          const reason = qualityData.reason || 'Unknown';
+
+          console.log(`📊 Street View Quality Score: ${score}/100 - ${reason}`);
+
+          // If score is below threshold, return famous home fallback
+          const QUALITY_THRESHOLD = 40;
+          if (score < QUALITY_THRESHOLD) {
+            console.log(`⚠️ Score ${score} below threshold ${QUALITY_THRESHOLD} - returning famous home fallback`);
+            const fallback = getRandomFamousHomeFallback(styleId);
+            if (fallback) {
+              const imageBase64 = fs.readFileSync(fallback.imagePath).toString('base64');
+              return res.json({
+                success: true,
+                generatedImage: { base64: imageBase64, mimeType: 'image/png' },
+                message: `Street View image quality too low (score: ${score}/100 - ${reason}). Here's the ${fallback.home.name} in ${fallback.home.location} instead!`,
+                fallbackHome: fallback.home,
+                address: parsedAddress,
+                style: styleId,
+                styleName,
+                model: 'fallback',
+                qualityScore: score,
+                qualityReason: reason,
+              });
+            }
+          }
+        }
+      } catch (qualityError) {
+        console.log('❌ Quality check failed:', qualityError.message);
+        console.log('   Proceeding with full analysis...');
+      }
+    } else {
+      console.log('⚠️ Quality check skipped - genAI or streetViewBase64 not available');
+    }
+
     // Step 2: Analyze BOTH images SEPARATELY with dedicated structured prompts
     let semanticDescription = 'A suburban home with typical American architecture.';
 
@@ -1409,6 +1473,66 @@ app.post('/api/generate-v2', generationLimiter, async (req, res) => {
 
     if (!streetViewBase64) {
       return res.status(400).json({ error: 'Could not fetch street view image' });
+    }
+
+    // === QUICK IMAGE QUALITY CHECK (before expensive identity extraction) ===
+    console.log('🔍 Starting Street View quality check...');
+    if (genAI && streetViewBase64 && !identityCache.get(cacheKey)) {
+      // Only check quality if we haven't already analyzed this address
+      const quickModel = genAI.getGenerativeModel({ model: 'gemini-2.0-flash-lite' });
+
+      const qualityCheckPrompt = `Rate this Street View image for generating a house diorama. Score 0-100.
+
+SCORING CRITERIA:
+- 80-100: Clear, unobstructed view of a house facade. Walls, roof, windows, door visible.
+- 60-79: Partial view - house visible but some parts blocked by trees or angle.
+- 40-59: Poor view - house mostly obscured by vegetation, fencing, or distance.
+- 20-39: Very poor - only glimpses of house through heavy obstruction.
+- 0-19: Unusable - no house visible, privacy blur, only walls/fences/vegetation.
+
+RESPOND WITH ONLY A JSON OBJECT:
+{"score": [0-100], "reason": "[brief 5-10 word explanation]"}`;
+
+      try {
+        const qualityResult = await quickModel.generateContent([
+          qualityCheckPrompt,
+          { inlineData: { data: streetViewBase64, mimeType: 'image/jpeg' } }
+        ]);
+        const qualityText = (await qualityResult.response).text().trim();
+        console.log('📝 Quality check raw response:', qualityText.substring(0, 200));
+
+        const jsonMatch = qualityText.match(/\{[\s\S]*\}/);
+        if (jsonMatch) {
+          const qualityData = JSON.parse(jsonMatch[0]);
+          const score = parseInt(qualityData.score) || 0;
+          const reason = qualityData.reason || 'Unknown';
+
+          console.log(`📊 Street View Quality Score: ${score}/100 - ${reason}`);
+
+          const QUALITY_THRESHOLD = 40;
+          if (score < QUALITY_THRESHOLD) {
+            console.log(`⚠️ Score ${score} below threshold ${QUALITY_THRESHOLD} - returning famous home fallback`);
+            const fallback = getRandomFamousHomeFallback(styleId);
+            if (fallback) {
+              const imageBase64 = fs.readFileSync(fallback.imagePath).toString('base64');
+              return res.json({
+                success: true,
+                generatedImage: { base64: imageBase64, mimeType: 'image/png' },
+                message: `Street View image quality too low (score: ${score}/100 - ${reason}). Here's the ${fallback.home.name} in ${fallback.home.location} instead!`,
+                fallbackHome: fallback.home,
+                qualityScore: score,
+                qualityReason: reason,
+                model: 'fallback',
+              });
+            }
+          }
+        }
+      } catch (qualityError) {
+        console.log('❌ Quality check failed:', qualityError.message);
+        console.log('   Proceeding with full analysis...');
+      }
+    } else if (identityCache.get(cacheKey)) {
+      console.log('📦 Using cached identity - skipping quality check');
     }
 
     // Step 2: Extract House Identity (with caching)
