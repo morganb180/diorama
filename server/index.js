@@ -1080,6 +1080,17 @@ OUTPUT: Write 4-5 detailed sentences describing the property from above. You MUS
         'impossible to provide',
         'privacy blur',
         'blurred out',
+        'unable to extract',
+        'no part of a house',
+        'no house is visible',
+        'house is not visible',
+        'cannot see a house',
+        'cannot see the house',
+        'no structural identity',
+        'cannot fulfill the request',
+        'only a concrete',
+        'only shows a',
+        'dense vegetation',
       ];
       const streetDescLower = streetDescription.toLowerCase();
       const isBlurred = blurIndicators.some(indicator => streetDescLower.includes(indicator));
