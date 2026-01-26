@@ -939,53 +939,60 @@ app.post('/api/generate', async (req, res) => {
       const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
 
       // === STREET VIEW PROMPT - Focus on what's visible from the street ===
-      const streetViewPrompt = `You are a real estate architecture expert analyzing a STREET VIEW image of a residential property. Describe ONLY what you can see from this front-facing perspective.
+      const streetViewPrompt = `You are a real estate architecture expert analyzing a STREET VIEW image. Extract PRECISE STRUCTURAL DATA - count everything, position everything. NO guessing.
 
 Use spatial directions as if FACING THE HOUSE FROM THE STREET (left/right means viewer's left/right).
 
-ARCHITECTURAL STYLE & FACADE:
-- Style name (Mediterranean, Craftsman, Colonial, Ranch, Contemporary, Spanish Revival, etc.)
-- Number of stories and height variations between sections
-- Exterior wall color (be EXTREMELY SPECIFIC: warm beige, cream, ivory, taupe, terracotta, sage green - NEVER generic "white" or "tan")
-- Trim color, accent colors, any contrasting elements
+STRUCTURE (count and measure):
+- Stories: [exact count: 1, 1.5, 2, 2.5, 3]
+- Architectural style: [specific name]
+- Exterior wall material: [stucco, brick, siding, stone, combination]
+- Wall color: [be EXTREMELY SPECIFIC: warm beige #D4C4A8, cream, ivory, taupe - NEVER generic "white" or "tan"]
+- Trim color: [specific color]
 
-ROOF (visible portions):
-- Shape (gable, hip, flat, combination, mansard)
-- Material and color (terracotta clay tile, concrete tile, gray asphalt shingle, wood shake, etc.)
-- Visible dormers, eaves, exposed rafters, decorative brackets
+ROOF (count visible elements):
+- Shape: [gable, hip, flat, combination, mansard]
+- Number of roof peaks/gables visible: [count]
+- Number of dormers: [count and position]
+- Eaves style: [exposed rafters, boxed, decorative brackets]
+- Material and color: [terracotta tile, concrete tile, asphalt shingle + color]
+- Chimneys: [count and position]
 
-WINDOWS:
-- Style (arched top, rectangular, bay window, picture window)
-- Grid pattern (divided lite, single pane, colonial grids)
-- Frame color (white, black, bronze, natural wood)
-- Approximate count and arrangement on facade
-- Any shutters (color and style)
+WINDOWS (COUNT PRECISELY):
+- Total windows visible on front facade: [exact count]
+- Ground floor windows: [count] - arrangement: [e.g., "2 left of door, 1 right"]
+- Second floor windows: [count] - arrangement: [e.g., "3 evenly spaced"]
+- Window style: [arched, rectangular, bay - note which windows]
+- Frame color: [white, black, bronze]
+- Shutters: [yes/no, count, color]
 
-FRONT DOOR & ENTRY:
-- Door style and color
-- Entry features (covered porch, portico, columns, steps)
-- Position on facade (centered, offset left, offset right)
+ENTRYWAY (be exact):
+- Door position on facade: [center, left of center, right of center, far left, far right]
+- Door type: [single, double, with sidelights, with transom window]
+- Door color: [specific color]
+- Porch: [none, small covered, portico with columns, full-width porch]
+- Columns/pillars: [count, style - round, square, tapered]
+- Steps to entry: [count]
 
-GARAGE:
-- Position relative to house (attached left, attached right, front-facing, set back)
-- Number of garage doors
-- Door style and color
-- Windows on garage doors (yes/no, style if present)
+GARAGE (count everything):
+- Position: [attached left, attached right, front-facing center, setback, detached, not visible]
+- Number of garage doors: [1, 2, 3]
+- Door style: [paneled, with windows, carriage style]
+- Garage door color: [specific color]
 
-DRIVEWAY & WALKWAYS:
-- Driveway approach direction (from left, from right, from center)
-- Material and color (light gray concrete, tan pavers, brick, stamped concrete)
-- Walkway to front door (material, path)
-- Any entry pillars, columns, or gates (describe position)
+DRIVEWAY:
+- Position: [approaches from left, right, center]
+- Material: [concrete, asphalt, pavers, gravel]
+- Shape: [straight, curved, Y-shaped, circular]
+- Width: [single car, double car, wide]
 
-FRONT YARD LANDSCAPING:
-- Lawn condition and coverage
-- Trees with EXACT positions (e.g., "tall palm tree at front-left corner", "mature oak front-right of driveway")
-- Hedges and shrubs with positions (e.g., "low boxwood hedge along foundation", "tall hedges along left property line")
-- Flower beds, decorative rocks, or garden features
-- Fencing visible (type, color, position: "white vinyl fence along left side")
+LANDSCAPING (positions matter):
+- Trees: [count] - positions: [e.g., "1 tall palm front-left, 2 small ornamental front-right"]
+- Foundation plantings: [yes/no, description]
+- Hedges: [position - e.g., "along left property line"]
+- Lawn size: [small, medium, large front yard]
 
-OUTPUT: Write 4-5 detailed sentences describing the front facade, starting with architectural style, then systematically covering each visible element with precise spatial positions.`;
+OUTPUT: Write 4-5 detailed sentences with EXACT COUNTS and POSITIONS. Start with: "[count] story [style] with [count] windows..." Be precise - this will be used to recreate the structure exactly.`;
 
       // === AERIAL VIEW PROMPT - Focus on what's visible from above ===
       const aerialViewPrompt = `You are a real estate architecture expert analyzing an AERIAL/SATELLITE image of a residential property. Describe ONLY what you can see from this bird's-eye perspective.
@@ -1099,20 +1106,21 @@ The output must be detailed enough for an AI to recreate THIS EXACT property wit
       // Fallback to street view only if aerial not available
       const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
 
-      const visionPrompt = `You are a real estate architecture expert. Analyze this Street View image with EXTREME PRECISION for an AI image generator. Describe from the perspective of someone FACING THE HOUSE from the street.
+      const visionPrompt = `You are a real estate architecture expert. Extract PRECISE STRUCTURAL DATA from this Street View image. COUNT everything, POSITION everything. NO guessing or imagination.
 
-Describe EXACTLY with SPATIAL POSITIONS:
-- Exterior wall color (be specific: beige, tan, cream - NOT generic "white" unless truly white)
-- Architectural style (Craftsman, Spanish Colonial, Mediterranean, Ranch, etc.)
-- Roof color and style, exposed rafters/eaves if present
-- Garage: door count, window style (arched, rectangular), position (left/right/center when facing house)
-- Fencing with location (e.g., "white fence along left side", "block wall on right")
-- Driveway position (e.g., "driveway on the left leading to garage")
-- Pillars, columns, porches with positions
-- Trees with positions (e.g., "large palm tree front right", "row of hedges along left")
-- ONLY if clearly visible: pool in backyard/side yard, or other yard features. Do NOT assume a pool exists - most homes don't have one. Pools are never in front yards.
+EXTRACT WITH EXACT COUNTS:
+- Stories: [1, 1.5, 2, 2.5, or 3]
+- Architectural style: [specific name]
+- Wall color: [specific shade - beige, cream, tan, NOT generic "white"]
+- Roof: [shape, color, number of gables/peaks visible]
+- Windows: [total count on front facade, arrangement per floor]
+- Entryway: [door position, porch type, column count if any]
+- Garage: [position (left/right/center), door count (1/2/3)]
+- Driveway: [position, material if visible]
+- Trees: [count and positions - e.g., "2 palms front-left, 1 oak front-right"]
+- Pool: ONLY if clearly visible in backyard/side yard. If no pool visible, state "no pool". Never in front yards.
 
-Output ONE detailed paragraph (3-4 sentences). USE SPATIAL LANGUAGE: left/right (when facing house from street), front/back. ACCURACY AND POSITIONING ARE CRITICAL - the AI must recreate THIS EXACT house with correct element placement. Do NOT mention a pool unless you can clearly see one - if no pool is visible, state "no pool".`;
+OUTPUT: One detailed paragraph (4-5 sentences) starting with exact counts: "[X]-story [style] with [Y] windows..." Include ALL structural elements with positions. This will be used to recreate the exact structure - precision is critical.`;
 
       const imagePart = {
         inlineData: {
@@ -1363,34 +1371,67 @@ app.post('/api/generate-v2', generationLimiter, async (req, res) => {
     if (!identity && genAI) {
       const visionModel = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
 
-      const identityPrompt = `Extract this house's IDENTITY - the features that make it instantly recognizable.
+      const identityPrompt = `Extract this house's PRECISE STRUCTURAL IDENTITY. Be extremely specific - count everything, note exact positions. NO imagination or assumptions.
 
 === HOUSE IDENTITY CARD ===
 
-**COLORS**:
+**COLORS** (be precise):
 - Walls: [exact shade + hex approximation]
 - Roof: [exact shade + hex approximation]
 - Trim/accents: [colors]
 - Garage doors: [color]
+- Front door: [color]
 
-**ARCHITECTURE**:
-- Style: [name]
-- Stories: [count]
-- Roof type: [shape]
+**STRUCTURE** (count and measure):
+- Stories: [exact count: 1, 1.5, 2, 2.5, 3]
+- Architectural style: [specific name]
+- Roof type: [hip, gable, flat, mansard, gambrel, combination - describe each section]
+- Number of roof peaks/gables visible from front: [count]
+- Chimneys: [count and position]
 
-**SIGNATURE FEATURES** (the 4-5 things that make THIS house unique):
-1. [most distinctive]
-2. [second]
-3. [third]
-4. [fourth]
-5. [fifth if applicable]
+**WINDOWS** (count precisely):
+- Total windows visible on front facade: [count]
+- Window arrangement per floor: [e.g., "ground floor: 2 left of door, 1 right; second floor: 3 evenly spaced"]
+- Window styles: [arched, rectangular, bay, dormer - note which and where]
+- Shutters: [yes/no, color if yes]
+
+**ENTRYWAY**:
+- Door position: [center, left of center, right of center, far left, far right]
+- Door style: [single, double, with sidelights, with transom]
+- Porch type: [none, covered porch, portico, full-width porch, wraparound]
+- Columns/pillars: [count, style - round, square, tapered]
+- Steps: [count if visible]
+
+**GARAGE**:
+- Position: [left side, right side, center, detached, not visible]
+- Doors: [count: 1, 2, 3]
+- Door style: [paneled, windows on top, carriage style]
+
+**DRIVEWAY**:
+- Position: [left side, right side, center, circular]
+- Material if visible: [concrete, asphalt, pavers, gravel]
+- Shape: [straight, curved, Y-shaped, circular]
+
+**LANDSCAPING** (positions matter):
+- Trees: [count and position - e.g., "1 large oak front-left, 2 small trees front-right"]
+- Shrubs/hedges: [position - e.g., "foundation plantings across front", "hedges along left side"]
+- Lawn areas: [front yard size estimate - small, medium, large]
 
 **FROM AERIAL** (if aerial image provided):
-- Pool: [YES with exact position on lot (e.g., "backyard, center-left") OR NO - be definitive]
-- Notable backyard features: [description]
+- Pool: [YES with exact position on lot (e.g., "backyard, center-left, kidney-shaped") OR NO - be definitive]
+- Patio/deck: [position and approximate size]
+- Backyard trees: [count and positions]
+- Fencing: [type and which sides]
+
+**DISTINCTIVE FEATURES** (what makes THIS house unique):
+1. [most recognizable feature]
+2. [second]
+3. [third]
 
 **ONE-SENTENCE IDENTITY**:
-[A single sentence capturing this house's essence that would make the owner say "that's MY house!"]`;
+[A single sentence capturing this house's essence that would make the owner say "that's MY house!"]
+
+CRITICAL: Count everything. Position everything. Do NOT guess or assume - if you can't see it clearly, say "not visible". The goal is ZERO imagination at the structural level.`;
 
       const imageParts = [{ inlineData: { data: streetViewBase64, mimeType: 'image/jpeg' } }];
       if (aerialViewBase64) {
