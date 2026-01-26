@@ -1067,6 +1067,42 @@ OUTPUT: Write 4-5 detailed sentences describing the property from above. You MUS
       const streetDescription = (await streetResult.response).text().trim();
       const aerialDescription = (await aerialResult.response).text().trim();
 
+      // === CHECK FOR BLURRED/UNIDENTIFIABLE IMAGERY ===
+      const blurIndicators = [
+        'impossible to determine',
+        'extreme blurring',
+        'extremely blurred',
+        'cannot identify',
+        'cannot be identified',
+        'completely obscured',
+        'not possible to identify',
+        'impossible to extract',
+        'impossible to provide',
+        'privacy blur',
+        'blurred out',
+      ];
+      const streetDescLower = streetDescription.toLowerCase();
+      const isBlurred = blurIndicators.some(indicator => streetDescLower.includes(indicator));
+
+      if (isBlurred) {
+        console.log('⚠️ Street View imagery is blurred/obscured - returning famous home fallback');
+        const fallback = getRandomFamousHomeFallback(styleId);
+        if (fallback) {
+          const imageBase64 = fs.readFileSync(fallback.imagePath).toString('base64');
+          return res.json({
+            success: true,
+            generatedImage: { base64: imageBase64, mimeType: 'image/png' },
+            message: `This address has privacy-blurred Street View imagery. Here's the ${fallback.home.name} in ${fallback.home.location} instead!`,
+            fallbackHome: fallback.home,
+            address: parsedAddress,
+            style: styleId,
+            styleName,
+            model: 'fallback',
+            blurredAddress: true,
+          });
+        }
+      }
+
       // === COMBINE both descriptions into a comprehensive prompt ===
       const combinePrompt = `You are creating a SINGLE comprehensive property description for an AI image generator by combining two expert analyses.
 
