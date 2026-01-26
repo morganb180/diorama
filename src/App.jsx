@@ -262,8 +262,8 @@ function App() {
                 exit={{ opacity: 0, y: -20 }}
                 className="space-y-6"
               >
-                {/* No Street View Notice */}
-                {result.noStreetView && (
+                {/* Fallback Notice - shown when we couldn't generate for the actual address */}
+                {(result.noStreetView || result.fallbackHome) && (
                   <motion.div
                     initial={{ opacity: 0, y: -10 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -276,7 +276,9 @@ function App() {
                       </svg>
                       <div>
                         <p className="text-sm font-medium text-amber-200">
-                          Google Street View isn't available for this address
+                          {result.qualityScore !== undefined
+                            ? `We couldn't get a clear view of this address (quality: ${result.qualityScore}/100)`
+                            : "Google Street View isn't available for this address"}
                         </p>
                         <p className="text-sm text-amber-200/80 mt-1">
                           {result.fallbackHome ? (
@@ -285,6 +287,11 @@ function App() {
                             <>Try a different address, or explore our gallery of famous homes.</>
                           )}
                         </p>
+                        {result.qualityReason && (
+                          <p className="text-xs text-amber-200/60 mt-1 italic">
+                            {result.qualityReason}
+                          </p>
+                        )}
                       </div>
                     </div>
                   </motion.div>
