@@ -1000,19 +1000,29 @@ ROOF (from above):
 - Any skylights, solar panels, chimneys (with positions)
 - Multiple roof sections or height levels
 
-LOT SHAPE & DIMENSIONS:
+STEP 1 - IDENTIFY PROPERTY BOUNDARIES:
+- Locate the lot lines/fences that define THIS property's boundaries
+- Note where the property ends and neighbors begin (look for fence lines, hedge rows, or visible lot divisions)
+- Identify front yard (between house and street), side yards (left/right of house), and backyard (behind house)
+
+STEP 2 - LOT SHAPE & DIMENSIONS:
 - Overall lot shape (rectangular, corner lot, pie-shaped, irregular)
 - Approximate lot proportions (wide/narrow, deep/shallow)
 - House position on lot (centered, offset toward front/back/left/right)
 
-DRIVEWAY LAYOUT:
+STEP 3 - DRIVEWAY LAYOUT:
 - Full driveway path from street to garage
 - Driveway shape (straight, curved, circular, Y-shaped)
 - Parking areas or widened sections
 - Position relative to house (along left side, along right side, center approach)
 
-BACKYARD FEATURES:
-- Pool: ONLY if clearly centered within THIS property's backyard (not near lot edges). Pools at the edge of the image or clearly on neighboring lots should be IGNORED. Describe shape and position if present.
+STEP 4 - POOL DETECTION (CRITICAL - BE PRECISE):
+First, answer: Is there a pool WITHIN this property's boundaries? YES or NO.
+- If NO: State "No pool on this property" and move on. Do NOT imagine or add a pool.
+- If YES: Describe its EXACT position on the lot (e.g., "pool in backyard, center-left, about 15 feet from back fence"). Pools are typically in backyards or side yards, never in front yards.
+- IGNORE any pools visible near lot edges or on neighboring properties - these belong to neighbors.
+
+BACKYARD FEATURES (besides pool):
 - Covered patio or pergola structures (position and size)
 - Outdoor kitchen, fire pit, or built-in features
 - Patio/deck areas and hardscape
@@ -1032,7 +1042,7 @@ NEIGHBORING CONTEXT:
 - Relationship to neighboring properties
 - Street orientation
 
-OUTPUT: Write 4-5 detailed sentences describing the property from above, focusing on lot layout, backyard features, and landscaping. Only mention a pool if it's clearly centered in THIS property's backyard - ignore pools near lot boundaries or on neighboring properties.`;
+OUTPUT: Write 4-5 detailed sentences describing the property from above. You MUST explicitly state whether this property has a pool (YES with exact location, or NO). If no pool exists on this property, do not mention pools at all. If a pool exists, describe its exact position on the lot - do not relocate it. Ignore any pools on neighboring properties.`;
 
       // Run BOTH analyses in PARALLEL for speed
       const streetViewPart = {
@@ -1066,7 +1076,10 @@ TASK: Merge these into ONE cohesive, detailed paragraph (6-8 sentences) that inc
 - Include tree positions from BOTH views
 - Use consistent spatial language (left/right when facing house from street, front/back)
 
-POOL RULE: Only include a pool if the aerial analysis explicitly describes one centered in the backyard. Pools near property edges are likely neighbors' - exclude those.
+POOL RULE (STRICT):
+- If the aerial analysis says "No pool on this property" or doesn't mention a pool: DO NOT include a pool. Never imagine or add one.
+- If the aerial analysis describes a pool with a specific location: Include it at that EXACT position. Do not move or relocate the pool.
+- Pools are only in backyards or side yards, never front yards.
 
 The output must be detailed enough for an AI to recreate THIS EXACT property with precise element placement. Do not omit any specific details from either analysis.`;
 
@@ -1097,9 +1110,9 @@ Describe EXACTLY with SPATIAL POSITIONS:
 - Driveway position (e.g., "driveway on the left leading to garage")
 - Pillars, columns, porches with positions
 - Trees with positions (e.g., "large palm tree front right", "row of hedges along left")
-- ONLY if clearly visible: pool or backyard features. Do NOT assume a pool exists - most homes don't have one.
+- ONLY if clearly visible: pool in backyard/side yard, or other yard features. Do NOT assume a pool exists - most homes don't have one. Pools are never in front yards.
 
-Output ONE detailed paragraph (3-4 sentences). USE SPATIAL LANGUAGE: left/right (when facing house from street), front/back. ACCURACY AND POSITIONING ARE CRITICAL - the AI must recreate THIS EXACT house with correct element placement. Do NOT mention a pool unless you can clearly see one.`;
+Output ONE detailed paragraph (3-4 sentences). USE SPATIAL LANGUAGE: left/right (when facing house from street), front/back. ACCURACY AND POSITIONING ARE CRITICAL - the AI must recreate THIS EXACT house with correct element placement. Do NOT mention a pool unless you can clearly see one - if no pool is visible, state "no pool".`;
 
       const imagePart = {
         inlineData: {
@@ -1373,7 +1386,7 @@ app.post('/api/generate-v2', generationLimiter, async (req, res) => {
 5. [fifth if applicable]
 
 **FROM AERIAL** (if aerial image provided):
-- Pool: [yes/no, shape, position]
+- Pool: [YES with exact position on lot (e.g., "backyard, center-left") OR NO - be definitive]
 - Notable backyard features: [description]
 
 **ONE-SENTENCE IDENTITY**:
@@ -1429,7 +1442,10 @@ YOUR TASK:
 - All signature features from the identity card must be visible
 - The owner should immediately recognize their home
 
-POOL: Only include a pool if the identity explicitly describes one. If no pool mentioned, do not add one.
+POOL RULE (STRICT):
+- If the identity says "no pool" or doesn't mention a pool: DO NOT add a pool under any circumstances.
+- If the identity describes a pool: Place it at the EXACT position specified (e.g., "backyard center-left"). Do not move or relocate it.
+- Pools are ONLY in backyards or side yards. NEVER place a pool in the front yard.
 
 Generate now.`
         : `${stylePrompt}
@@ -1440,7 +1456,10 @@ ${identity}
 
 Create this house based on the identity description above. Every architectural feature must match. The owner must immediately recognize their home.
 
-POOL: Only include a pool if the identity explicitly describes one. If no pool mentioned, do not add one.
+POOL RULE (STRICT):
+- If the identity says "no pool" or doesn't mention a pool: DO NOT add a pool under any circumstances.
+- If the identity describes a pool: Place it at the EXACT position specified (e.g., "backyard center-left"). Do not move or relocate it.
+- Pools are ONLY in backyards or side yards. NEVER place a pool in the front yard.
 
 Generate now.`;
 
