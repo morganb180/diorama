@@ -276,9 +276,7 @@ function App() {
                       </svg>
                       <div>
                         <p className="text-sm font-medium text-amber-200">
-                          {result.qualityScore !== undefined
-                            ? `We couldn't get a clear view of this address (quality: ${result.qualityScore}/100)`
-                            : "Google Street View isn't available for this address"}
+                          We couldn't get a clear view of this address
                         </p>
                         <p className="text-sm text-amber-200/80 mt-1">
                           {result.fallbackHome ? (
@@ -287,11 +285,6 @@ function App() {
                             <>Try a different address, or explore our gallery of famous homes.</>
                           )}
                         </p>
-                        {result.qualityReason && (
-                          <p className="text-xs text-amber-200/60 mt-1 italic">
-                            {result.qualityReason}
-                          </p>
-                        )}
                       </div>
                     </div>
                   </motion.div>
