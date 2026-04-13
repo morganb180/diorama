@@ -151,6 +151,15 @@ const generationLimiter = rateLimit({
   legacyHeaders: false,
 });
 
+// Rate limit for Google Maps proxy endpoints - 20 per minute per IP
+const mapsProxyLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  max: 20,
+  message: { error: 'Too many map requests. Please wait a minute.' },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
 // ============================================
 // IN-MEMORY CACHE
 // ============================================
@@ -238,7 +247,21 @@ class GenerationQueue {
 const generationQueue = new GenerationQueue(3);
 
 // Middleware
-app.use(cors());
+const ALLOWED_ORIGINS = [
+  'https://fun.opendoor.com',
+  'https://squid-app-ukw2n.ondigitalocean.app',
+];
+if (process.env.NODE_ENV !== 'production') {
+  ALLOWED_ORIGINS.push('http://localhost:3001', 'http://localhost:5173');
+}
+app.use(cors({
+  origin: (origin, callback) => {
+    // Allow requests with no origin (server-to-server, curl) in dev only
+    if (!origin && process.env.NODE_ENV !== 'production') return callback(null, true);
+    if (!origin || ALLOWED_ORIGINS.includes(origin)) return callback(null, true);
+    callback(new Error('Not allowed by CORS'));
+  },
+}));
 app.use(express.json({ limit: '10mb' }));
 app.use(generalLimiter); // Apply general rate limit to all routes
 
@@ -551,21 +574,17 @@ function sanitizeAddress(address) {
 app.get('/api/health', (req, res) => {
   res.json({
     status: 'ok',
-    hasStreetViewKey: !!GOOGLE_MAPS_API_KEY,
-    hasGoogleAIKey: !!GOOGLE_AI_API_KEY,
     queue: generationQueue.getStatus(),
-    cache: {
-      streetView: streetViewCache.cache.size,
-      aerialView: aerialViewCache.cache.size,
-      identity: identityCache.cache.size,
-    },
   });
 });
 
 /**
- * Clear all caches (for debugging/fixes)
+ * Clear all caches (disabled in production)
  */
 app.post('/api/clear-cache', (req, res) => {
+  if (process.env.NODE_ENV === 'production') {
+    return res.status(403).json({ error: 'Not available in production' });
+  }
   streetViewCache.cache.clear();
   aerialViewCache.cache.clear();
   identityCache.cache.clear();
@@ -583,10 +602,33 @@ app.get('/api/stats', (req, res) => {
 });
 
 /**
+ * Server-side Places Autocomplete proxy
+ * Keeps the Maps API key off the client
+ */
+app.get('/api/places/autocomplete', mapsProxyLimiter, async (req, res) => {
+  const { input } = req.query;
+  if (!input || input.length < 3) {
+    return res.json({ predictions: [] });
+  }
+  if (!GOOGLE_MAPS_API_KEY) {
+    return res.status(503).json({ error: 'Maps API not configured' });
+  }
+  try {
+    const url = `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${encodeURIComponent(input)}&types=address&components=country:us&key=${GOOGLE_MAPS_API_KEY}`;
+    const response = await fetch(url);
+    const data = await response.json();
+    res.json({ predictions: (data.predictions || []).map(p => ({ description: p.description, place_id: p.place_id })) });
+  } catch (error) {
+    console.error('Places autocomplete error:', error);
+    res.status(500).json({ error: 'Autocomplete failed' });
+  }
+});
+
+/**
  * Get Street View metadata for an address
  * Returns pano_id, location, and availability status
  */
-app.get('/api/streetview/metadata', async (req, res) => {
+app.get('/api/streetview/metadata', mapsProxyLimiter, async (req, res) => {
   const { address } = req.query;
 
   const sanitizedAddress = sanitizeAddress(address);
@@ -618,7 +660,7 @@ app.get('/api/streetview/metadata', async (req, res) => {
  * Get Street View image URL for an address
  * Returns a signed URL or the image directly
  */
-app.get('/api/streetview/image', async (req, res) => {
+app.get('/api/streetview/image', mapsProxyLimiter, async (req, res) => {
   const { address, size = '640x480', fov = '90', pitch = '10', heading } = req.query;
 
   const sanitizedAddress = sanitizeAddress(address);
@@ -660,7 +702,7 @@ app.get('/api/streetview/image', async (req, res) => {
  * Fetch Street View image and return as base64
  * This is useful for passing to vision models
  */
-app.get('/api/streetview/fetch', async (req, res) => {
+app.get('/api/streetview/fetch', mapsProxyLimiter, async (req, res) => {
   const { address, size = '640x480' } = req.query;
 
   const sanitizedAddress = sanitizeAddress(address);
@@ -703,7 +745,7 @@ app.get('/api/streetview/fetch', async (req, res) => {
  * Analyze a property image using Gemini Vision
  * Returns a semantic description suitable for image generation
  */
-app.post('/api/vision/analyze', async (req, res) => {
+app.post('/api/vision/analyze', generationLimiter, async (req, res) => {
   const { imageBase64, mimeType = 'image/jpeg' } = req.body;
 
   if (!genAI) {
@@ -810,7 +852,7 @@ async function generateWithGemini(prompt, res) {
 /**
  * Fetch aerial/satellite view image
  */
-app.get('/api/aerialview/fetch', async (req, res) => {
+app.get('/api/aerialview/fetch', mapsProxyLimiter, async (req, res) => {
   const { address, size = '640x640', zoom = '19' } = req.query;
 
   const sanitizedAddress = sanitizeAddress(address);
@@ -853,7 +895,7 @@ app.get('/api/aerialview/fetch', async (req, res) => {
  * Complete pipeline: Address → Street View + Aerial View → Vision → Image Generation
  * SECURED: Now requires styleId from allowlist instead of raw stylePrompt
  */
-app.post('/api/generate', async (req, res) => {
+app.post('/api/generate', generationLimiter, async (req, res) => {
   const { address, styleId } = req.body;
 
   // Validate styleId against allowlist
