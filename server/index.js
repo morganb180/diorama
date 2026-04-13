@@ -265,6 +265,14 @@ app.use(cors({
 app.use(express.json({ limit: '10mb' }));
 app.use(generalLimiter); // Apply general rate limit to all routes
 
+// TEMPORARY: Redirect all traffic to opendoor.com while API keys are being secured
+// Remove this block to restore the diorama generator
+if (process.env.REDIRECT_TO_MAIN_SITE === 'true') {
+  app.use((req, res) => {
+    res.redirect(301, 'https://www.opendoor.com');
+  });
+}
+
 // Serve static files from the built frontend (production)
 const __dirname = path.dirname(new URL(import.meta.url).pathname);
 const distPath = path.join(__dirname, '..', 'dist');
